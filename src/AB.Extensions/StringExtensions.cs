@@ -1,0 +1,103 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace AB.Extensions
+{
+    public static class Extensions
+    {
+        public static IEnumerable<string> SplitQuotedCSV(this string input)  //credit: http://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
+        {
+            Regex csvSplit = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
+
+            foreach (Match match in csvSplit.Matches(input))
+            {
+                //Interesting explanation of yield return here: https://www.youtube.com/watch?v=4fju3xcm21M
+                //I think it may actually be more performant than copying an array back and forth or using LINQ to return
+                yield return match.Value.TrimStart(',');
+            }
+        }
+        public static IEnumerable<string> SplitStringByLineBreaks(this string str, bool removeEmptyLines = false)
+        {
+            return str.Split(new[] { "\r\n", "\r", "\n" },
+                removeEmptyLines ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
+        }
+        public static string RemoveLineBreaks(this string lines)
+        {
+            return lines.Replace("\r", "").Replace("\n", "");
+        }
+        public static string ReplaceLineBreaks(this string lines, string replacement)
+        {
+            return lines.Replace("\r\n", replacement)
+                        .Replace("\r", replacement)
+                        .Replace("\n", replacement);
+        }
+        public static bool IsNull<T>(this T obj) where T : class
+        {
+            return obj == null;
+        }
+        public static bool IsNull<T>(this T? obj) where T : struct
+        {
+            return !obj.HasValue;
+        }
+
+        #region Randoms
+
+        //stolen from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+        public static class ThreadSafeRandom
+        {
+            [ThreadStatic]
+            private static Random Local;
+
+            public static Random ThisThreadsRandom
+            {
+                get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
+            }
+        }
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
+        public static void NaiveNonRandomShuffle<T>(this IList<T> list)
+        {
+            list.OrderBy(a => Guid.NewGuid());
+        }               
+
+        #endregion Randoms
+                
+        //Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
+        (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+        public static string ToReverseString(this string text)
+        {
+            if (text == null) return null;
+            if (text == string.Empty) return string.Empty;
+            char[] array = text.ToCharArray();
+            Array.Reverse(array);
+            return new String(array);
+        }
+    }
+}
