@@ -1,5 +1,12 @@
 {
   "version": "1.0.0-*",
+  "authors": [ "Andrew Brad" ],
+  "description": "Extensions library I've contributed to over time.",
+  "packOptions": {
+    "owners": [ "Andrew Brad" ],
+    "summary": "Extensions library I've contributed to over time.",
+    "iconUrl": "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwi9-vTOzPnOAhVJbiYKHbfOAcoQjRwIBw&url=http%3A%2F%2Fmanytools.org%2Fhttp-html-text%2F&bvm=bv.131783435,d.cGc&psig=AFQjCNGy-JckAEF6WsXj0cxsT5mLWHQSrw&ust=1473212006695503"
+  },
 
   "dependencies": {
     "NETStandard.Library": "1.6.0",
@@ -10,5 +17,12 @@
     "netstandard1.6": {
       "imports": "dnxcore50"
     }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
   }
+
 }
