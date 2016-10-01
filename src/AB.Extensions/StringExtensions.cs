@@ -46,7 +46,7 @@ namespace AB.Extensions
 
         #region Randoms
 
-        //stolen from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+        //grabbed from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
         public static class ThreadSafeRandom
         {
             [ThreadStatic]
@@ -58,18 +58,6 @@ namespace AB.Extensions
             }
         }
 
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
 
         public static void NaiveNonRandomShuffle<T>(this IList<T> list)
         {
@@ -118,6 +106,11 @@ namespace AB.Extensions
                 if (throwExceptionIfInvalid) throw new FormatException("String is not formatted as a Guid.");
                 else return Guid.Empty;
             }
+        }
+
+        public static T ToEnumTypeOf<T>(this string stringValue)
+        {
+            return (T)Enum.Parse(typeof(T), stringValue, true);
         }
     }
 }

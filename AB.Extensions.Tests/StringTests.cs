@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using AB.Extensions;
 using System;
+using static AB.Extensions.Common;
 
 namespace ABExtensions.Tests
 {
@@ -76,6 +77,29 @@ namespace ABExtensions.Tests
             var result = input.ToGuid();
             //Assert
             Assert.Equal(Guid.Empty, result);
+        }
+
+        [Fact]
+        public void String_To_Enum_Type_Of()
+        {
+            //Arrange
+            string input = "Ascending";
+            OrderByDirection desiredOutput = OrderByDirection.Ascending;
+            //Act
+            var result = input.ToEnumTypeOf<OrderByDirection>();
+            //Assert
+            Assert.Equal(desiredOutput, result);
+        }
+
+        [Fact]
+        public void String_To_Enum_Type_Of_Invalid()
+        {
+            //Arrange
+            string input = "lol";
+            //Act
+
+            //Assert
+            Assert.Throws<ArgumentException>( () => input.ToEnumTypeOf<OrderByDirection>());
         }
     }
 }
