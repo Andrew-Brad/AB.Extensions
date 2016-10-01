@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using AB.Extensions;
+using System;
 
 namespace ABExtensions.Tests
 {
@@ -39,6 +40,42 @@ namespace ABExtensions.Tests
             string expected = null;
             string operation = input.ToReverseString();
             Assert.Equal(expected, operation);
+        }
+
+        [Fact]
+        public void String_ToGuid_Valid()
+        {
+            //Arrange
+            string input = "d2650790-bc80-41a9-ae63-dd55e2240296";
+            Guid desiredOutput = Guid.Parse("d2650790-bc80-41a9-ae63-dd55e2240296");
+            //Act
+            var result = input.ToGuid();
+            //Assert
+            Assert.Equal(desiredOutput, result);
+        }
+
+        [Fact]
+        public void String_ToGuid_Invalid()
+        {
+            //Arrange
+            string input = "d2sdddddddddddddddddddddddddddddddddddddd650790-bc80-41a9-ae63-dd55e2240296";
+            Guid desiredOutput = Guid.Empty;
+            //Act
+            var result = input.ToGuid();
+            //Assert
+            Assert.Equal(Guid.Empty, result);
+        }
+
+        [Fact]
+        public void String_ToGuid_Null()
+        {
+            //Arrange
+            string input = null;
+            Guid desiredOutput = Guid.Empty;
+            //Act
+            var result = input.ToGuid();
+            //Assert
+            Assert.Equal(Guid.Empty, result);
         }
     }
 }

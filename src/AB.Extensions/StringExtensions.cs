@@ -99,5 +99,25 @@ namespace AB.Extensions
             Array.Reverse(array);
             return new String(array);
         }
+
+        /// <summary>
+        /// One liner for converting strings to Guids.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="throwExceptionIfInvalid"></param>
+        /// <returns></returns>
+        public static Guid ToGuid(this string input, bool throwExceptionIfInvalid = false)
+        {
+            Guid outGuid = Guid.Empty;
+            if (Guid.TryParse(input,out outGuid) == true)
+            {
+                return outGuid;
+            }
+            else
+            {
+                if (throwExceptionIfInvalid) throw new FormatException("String is not formatted as a Guid.");
+                else return Guid.Empty;
+            }
+        }
     }
 }
