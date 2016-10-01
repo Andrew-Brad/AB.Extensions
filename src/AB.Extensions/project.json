@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.1.0-*",
   "authors": [ "Andrew Brad" ],
   "description": "Extensions library I've contributed to over time.",
   "packOptions": {
