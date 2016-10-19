@@ -193,5 +193,11 @@ namespace AB.Extensions
                 list[n] = value;
             }
         }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (T element in source)
+                action(element);
+        }
     }
 }

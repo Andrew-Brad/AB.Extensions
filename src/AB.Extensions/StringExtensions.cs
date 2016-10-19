@@ -112,5 +112,18 @@ namespace AB.Extensions
         {
             return (T)Enum.Parse(typeof(T), stringValue, true);
         }
+
+        public static int CountOccurrencesOf(this string text, string occurrenceString)
+        {
+            if (string.IsNullOrEmpty(text)) return 0;
+            int count = 0;
+            int i = 0;
+            while ((i = text.IndexOf(occurrenceString, i)) != -1)
+            {
+                i += occurrenceString.Length;
+                count++;
+            }
+            return count;
+        }
     }
 }

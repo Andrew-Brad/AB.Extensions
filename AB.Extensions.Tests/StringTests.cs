@@ -101,5 +101,41 @@ namespace ABExtensions.Tests
             //Assert
             Assert.Throws<ArgumentException>( () => input.ToEnumTypeOf<OrderByDirection>());
         }
+
+        [Fact]
+        public void CountOccurrences()
+        {
+            //Arrange
+            string input = "lol";
+            int expectedCount = 2;
+            //Act
+            int actualCount = input.CountOccurrencesOf("l");
+            //Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void CountOccurrences_empty_string_should_return_0()
+        {
+            //Arrange
+            string input = "";
+            int expectedCount = 0;
+            //Act
+            int actualCount = input.CountOccurrencesOf("l");
+            //Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void CountOccurrences_empty_string_should_return_0_input_empty()
+        {
+            //Arrange
+            string input = "";
+            int expectedCount = 0;
+            //Act
+            int actualCount = input.CountOccurrencesOf("");
+            //Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
     }
 }
