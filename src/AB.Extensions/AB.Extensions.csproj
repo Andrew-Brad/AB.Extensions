@@ -4,10 +4,14 @@
     <Description>Dependency free extensions library for all of my personal projects.</Description>
     <VersionPrefix>1.3.0</VersionPrefix>
     <Authors>Andrew Brad</Authors>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>AB.Extensions</AssemblyName>
     <PackageId>AB.Extensions</PackageId>
-    <PackageIconUrl>https://www.google.com/url?sa=i&amp;rct=j&amp;q=&amp;esrc=s&amp;source=images&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=0ahUKEwi9-vTOzPnOAhVJbiYKHbfOAcoQjRwIBw&amp;url=http%3A%2F%2Fmanytools.org%2Fhttp-html-text%2F&amp;bvm=bv.131783435,d.cGc&amp;psig=AFQjCNGy-JckAEF6WsXj0cxsT5mLWHQSrw&amp;ust=1473212006695503</PackageIconUrl>
+    <PackageTags>extensions;andrew</PackageTags>
+    <PackageProjectUrl>https://github.com/Andrew-Brad/AB.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Andrew-Brad/AB.Extensions</RepositoryUrl>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
