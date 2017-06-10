@@ -243,3 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Delete_All_Bin_Obj_Folders.ps1
+/Delete_All_Bin_Obj_Folders.ps1
