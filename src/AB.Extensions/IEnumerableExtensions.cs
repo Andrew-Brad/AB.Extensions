@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using static AB.Extensions.Common;
-using static AB.Extensions.Extensions;
 
 namespace AB.Extensions
 {
@@ -180,7 +180,11 @@ namespace AB.Extensions
             }
         }
 
-
+        /// <summary>
+        /// Reorders elements in the IList based on a pseudo-random, thread-safe, environment tick count seed.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
         public static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;
@@ -193,6 +197,28 @@ namespace AB.Extensions
                 list[n] = value;
             }
         }
+
+        #region Randoms
+
+        //grabbed from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+        public static class ThreadSafeRandom
+        {
+            [ThreadStatic]
+            private static Random Local;
+
+            public static Random ThisThreadsRandom
+            {
+                get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
+            }
+        }
+
+
+        //public static void NaiveNonRandomShuffle<T>(this IList<T> list)
+        //{
+        //    list.OrderBy(a => Guid.NewGuid());
+        //}               
+
+        #endregion Randoms
 
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {

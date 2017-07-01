@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace AB.Extensions
 {
@@ -44,27 +41,6 @@ namespace AB.Extensions
             return !obj.HasValue;
         }
 
-        #region Randoms
-
-        //grabbed from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
-        public static class ThreadSafeRandom
-        {
-            [ThreadStatic]
-            private static Random Local;
-
-            public static Random ThisThreadsRandom
-            {
-                get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
-            }
-        }
-
-
-        public static void NaiveNonRandomShuffle<T>(this IList<T> list)
-        {
-            list.OrderBy(a => Guid.NewGuid());
-        }               
-
-        #endregion Randoms
                 
         //Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>
