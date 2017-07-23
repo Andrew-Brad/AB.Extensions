@@ -72,9 +72,9 @@ Task("RunTests")
 	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
 	});
 
-Task("UploadCodeCoverage")
-    .IsDependentOn("RunTests")    
-    .Does( () =>
+//Task("UploadCodeCoverage")
+    //.IsDependentOn("RunTests")    
+    //.Does( () =>
 	//{   
 	//	var settings = new CodecovSettings();
 	//	settings.Dump = true; // more @ http://cakebuild.net/api/Cake.Codecov/CodecovSettings/
@@ -82,15 +82,15 @@ Task("UploadCodeCoverage")
 	//	settings.Files = new[] { "coverage.xml" };
 	 //   Codecov(settings);
 	//});
-	{
+	//{
     // Upload a coverage report.
-    Codecov("coverage.xml");
-});
+    //Codecov("coverage.xml");
+//});
 
 Task("Default")
   .IsDependentOn("Build")
-  .IsDependentOn("RunTests")
-  .IsDependentOn("UploadCodeCoverage");
+  .IsDependentOn("RunTests");
+  //.IsDependentOn("UploadCodeCoverage");
   //.IsDependentOn("Pack");
 
 RunTarget(target);
