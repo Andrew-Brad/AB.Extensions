@@ -28,7 +28,7 @@ Task("Build")
     //.IsDependentOn("Version")
     .IsDependentOn("Restore")
     .Does(() => {
-        DotNetCoreBuild(project.GetDirectory().FullPath, settings);
+        DotNetCoreBuild("./AB.Extensions.sln", settings);
     });
 
 Task("Clean")
