@@ -34,5 +34,33 @@ namespace AB.Extensions.Tests
             //Assert
             Assert.False(orderedNumbers.SequenceEqual(shuffledNumbers));
         }
+
+        [Fact]
+        public void TakeUntil_Subset_Valid_List()
+        {
+            //Arrange
+            IList<int> numbers = Enumerable.Range(1, 10).ToList();
+            IList<int> expected = Enumerable.Range(1, 3).ToList();
+            //Act
+            var assertionList = numbers.TakeUntil(x => x == 3).ToList();
+            //Assert
+            Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(10)]
+        [InlineData(1000)]
+        [InlineData(short.MaxValue)]
+        public void TakeUntil_All_Elements_Valid_List(int count)
+        {
+            //Arrange
+            IList<int> numbers = Enumerable.Range(1, count).ToList();
+            IList<int> expected = Enumerable.Range(1, count).ToList();
+            //Act
+            var assertionList = numbers.TakeUntil(x => x == numbers.Count).ToList();
+            //Assert
+            Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+        }
     }
 }
