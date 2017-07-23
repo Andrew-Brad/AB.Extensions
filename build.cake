@@ -28,6 +28,11 @@ Task("Build")
     //.IsDependentOn("Version")
     .IsDependentOn("Restore")
     .Does(() => {
+	var settings = new DotNetCoreBuildSettings 
+        {
+            Configuration = configuration
+            // Runtime = IsRunningOnWindows() ? null : "unix-x64"
+        };
         DotNetCoreBuild("./AB.Extensions.sln", settings);
     });
 
