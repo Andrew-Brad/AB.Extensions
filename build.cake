@@ -39,11 +39,7 @@ Task("Build")
 Task("Clean")
     .Does(() => 
 	{
-        if (DirectoryExists(outputDir))
-        {
-            DeleteDirectory(outputDir, recursive:true);
-        }
-        CreateDirectory(outputDir);
+        CleanDirectories(new DirectoryPath[] { buildArtifacts });
     });
 
 Task("Restore")
