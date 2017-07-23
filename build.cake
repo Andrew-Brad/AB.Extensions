@@ -3,8 +3,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 var isLocalBuild        = !AppVeyor.IsRunningOnAppVeyor;
 var packPath            = Directory("./src/AB.Extensions");
-var sourcePath          = Directory("./src");
-var testsPath           = Directory("test");
+var sourcePath          = Directory("./src/AB.Extensions");
+var testsPath           = Directory("test/AB.Extensions.Tests");
 var buildArtifacts      = Directory("./artifacts/packages");
 var configuration   = Argument<string>("configuration", "Release");
 
@@ -33,7 +33,7 @@ Task("Build")
             Configuration = configuration
             // Runtime = IsRunningOnWindows() ? null : "unix-x64"
         };
-        DotNetCoreBuild("./AB.Extensions.sln", settings);
+        DotNetCoreBuild("./", settings);
     });
 
 Task("Clean")
@@ -42,13 +42,13 @@ Task("Clean")
         CleanDirectories(new DirectoryPath[] { buildArtifacts });
     });
 
-Task("Restore")
-    .Does(() => 
-	{
-        DotNetCoreRestore("src");
-    });
+//Task("Restore")
+//    .Does(() => 
+//	{
+//        DotNetCoreRestore("src");
+//    });
 
-	Task("Restore")
+Task("Restore")
     .Does(() =>
 	{
 	    var settings = new DotNetCoreRestoreSettings
@@ -56,6 +56,13 @@ Task("Restore")
 	        Sources = new [] { "https://api.nuget.org/v3/index.json" }
 	    };
 	
-	    DotNetCoreRestore(sourcePath, settings);
+	    DotNetCoreRestore("./", settings);
 	    DotNetCoreRestore(testsPath, settings);
 	});
+
+Task("Default")
+  .IsDependentOn("Build");
+  //.IsDependentOn("RunTests")
+  //.IsDependentOn("Pack");
+
+RunTarget(target);
