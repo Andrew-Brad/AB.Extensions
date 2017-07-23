@@ -58,7 +58,7 @@ namespace AB.Extensions
         public static string ToReverseString(this string text)
         {
             if (text == null) return null;
-            if (text == string.Empty) return string.Empty;
+            if (text.Length == 0) return text;
             char[] array = text.ToCharArray();
             Array.Reverse(array);
             return new String(array);
