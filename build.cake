@@ -1,5 +1,5 @@
-#tool nuget:?package=Codecov
-#addin nuget:?package=Cake.Codecov
+//#tool nuget:?package=Codecov
+//#addin nuget:?package=Cake.Codecov
 
 ///////////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
