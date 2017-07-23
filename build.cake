@@ -4,7 +4,7 @@
 var isLocalBuild        = !AppVeyor.IsRunningOnAppVeyor;
 var packPath            = Directory("./src/AB.Extensions");
 var sourcePath          = Directory("./src/AB.Extensions");
-var testsPath           = Directory("test/AB.Extensions.Tests");
+var testsPath           = Directory("./test/AB.Extensions.Tests");
 var buildArtifacts      = Directory("./artifacts/packages");
 var configuration   = Argument<string>("configuration", "Release");
 
@@ -60,9 +60,18 @@ Task("Restore")
 	    DotNetCoreRestore(testsPath, settings);
 	});
 
+Task("RunTests")
+    .IsDependentOn("Restore")
+    .IsDependentOn("Clean")
+    .Does( () =>
+	{   
+		var settings = new DotNetCoreTestSettings { Configuration = configuration };
+	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
+	});
+
 Task("Default")
-  .IsDependentOn("Build");
-  //.IsDependentOn("RunTests")
+  .IsDependentOn("Build")
+  .IsDependentOn("RunTests");
   //.IsDependentOn("Pack");
 
 RunTarget(target);
