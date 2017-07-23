@@ -163,8 +163,8 @@ namespace AB.Extensions
 
         public static IEnumerable<TSource> TakeUntil<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (source == null) throw new ArgumentNullException("Source is null.");
+            if (predicate == null) throw new ArgumentNullException("Predicate is null.");
             return TakeUntilImpl(source, predicate);
         }
 
