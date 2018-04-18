@@ -36,7 +36,7 @@ namespace AB.Extensions
         {
             int currentLineCursor = Console.CursorTop;
             Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(new string(Delimiters.SpaceChar, Console.BufferWidth));
+            Console.Write(Delimiters.Space.PadRight(Console.BufferWidth));
             Console.SetCursorPosition(0, currentLineCursor);
         }
 
