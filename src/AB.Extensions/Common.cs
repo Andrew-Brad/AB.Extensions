@@ -62,9 +62,11 @@ namespace AB.Extensions
                 public const string Comma = ",";
                 public const string Tilde = "~";
                 public const string Pipe = "|";
+                public const string Space = " ";
                 public const Char CommaChar = ',';
                 public const Char TildeChar = '~';
                 public const Char PipeChar = '|';
+                public const Char SpaceChar = ' ';
             }
 
             /// <summary>

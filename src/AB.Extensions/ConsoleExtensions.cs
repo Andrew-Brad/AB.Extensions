@@ -1,4 +1,5 @@
 ﻿using System;
+using static AB.Extensions.Common.StringConstants;
 
 namespace AB.Extensions
 {
@@ -27,9 +28,21 @@ namespace AB.Extensions
             Console.Write(message);
             Console.ResetColor();
         }
+        
+        /// <summary>
+        /// Clears the current line at the cursor.
+        /// </summary>
+        public static void ClearCurrentConsoleLine()
+        {
+            int currentLineCursor = Console.CursorTop;
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(Delimiters.SpaceChar, Console.BufferWidth));
+            Console.SetCursorPosition(0, currentLineCursor);
+        }
 
         /// <summary>
         /// A wrapper function that writes to the bottom line of your console, resetting the cursor to its original position.
+        /// If your text is wider than the console window, it will be truncated for presentation on screen.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="color"></param>
@@ -41,8 +54,11 @@ namespace AB.Extensions
             //Set cursor to bottom line:
             Console.CursorLeft = 0;
             Console.CursorTop = Console.WindowHeight - 1;
+            //Clear line for corner cases:
+            ClearCurrentConsoleLine();
             //Print Line:
-            WriteWithColor(message, color);
+            if (message.Length > Console.WindowWidth) WriteWithColor(message.Substring(0, Console.WindowWidth), color);
+            else WriteWithColor(message, color);
             //Reset to original position:
             Console.SetCursorPosition(cursorLeft, cursorTop);
         }
