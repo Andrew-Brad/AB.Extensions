@@ -24,9 +24,13 @@ namespace AB.Extensions
         /// <param name="color"></param>
         public static void WriteWithColor(string message, ConsoleColor color)
         {
+            //Capture existing colors:
+            var foreColor = Console.ForegroundColor;
+            var backColor = Console.BackgroundColor;
             Console.ForegroundColor = color;
             Console.Write(message);
-            Console.ResetColor();
+            Console.ForegroundColor = foreColor;
+            Console.BackgroundColor = backColor;
         }
         
         /// <summary>
@@ -38,6 +42,20 @@ namespace AB.Extensions
             Console.SetCursorPosition(0, Console.CursorTop);
             Console.Write(Delimiters.Space.PadRight(Console.BufferWidth));
             Console.SetCursorPosition(0, currentLineCursor);
+        }
+
+        /// <summary>
+        /// Clears the line at the given index as determined by <see cref="Console.CursorTop"/>.
+        /// </summary>
+        /// <param name="lineNumber">The line number from the top of the console.</param>
+        public static void ClearConsoleLine(int lineNumber)
+        {
+            //Capture existing cursor position:
+            int cursorLeft = Console.CursorLeft;
+            int cursorTop = Console.CursorTop;
+            Console.SetCursorPosition(0, lineNumber);
+            Console.Write(Delimiters.Space.PadRight(Console.BufferWidth - 1));
+            Console.SetCursorPosition(cursorLeft, cursorTop);
         }
 
         /// <summary>
@@ -57,7 +75,7 @@ namespace AB.Extensions
             //Clear line for corner cases:
             ClearCurrentConsoleLine();
             //Print Line:
-            if (message.Length > Console.WindowWidth) WriteWithColor(message.Substring(0, Console.WindowWidth), color);
+            if (message.Length > Console.WindowWidth) WriteWithColor(message.Substring(0, Console.WindowWidth - 1), color);
             else WriteWithColor(message, color);
             //Reset to original position:
             Console.SetCursorPosition(cursorLeft, cursorTop);
