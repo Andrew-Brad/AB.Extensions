@@ -1,3 +1,6 @@
+//#tool nuget:?package=Codecov
+//#addin nuget:?package=Cake.Codecov
+
 ///////////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,9 +72,25 @@ Task("RunTests")
 	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
 	});
 
+//Task("UploadCodeCoverage")
+    //.IsDependentOn("RunTests")    
+    //.Does( () =>
+	//{   
+	//	var settings = new CodecovSettings();
+	//	settings.Dump = true; // more @ http://cakebuild.net/api/Cake.Codecov/CodecovSettings/
+	//	settings.Verbose = true;
+	//	settings.Files = new[] { "coverage.xml" };
+	 //   Codecov(settings);
+	//});
+	//{
+    // Upload a coverage report.
+    //Codecov("coverage.xml");
+//});
+
 Task("Default")
   .IsDependentOn("Build")
   .IsDependentOn("RunTests");
+  //.IsDependentOn("UploadCodeCoverage");
   //.IsDependentOn("Pack");
 
 RunTarget(target);
