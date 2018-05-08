@@ -15,7 +15,14 @@ deploy:
   skip_symbols: true
 #  on:
 #    branch: dev
-
+notifications:
+- provider: Email
+  to:
+  - zep519@yahoo.com
+  subject: Build Notification
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
 image: Visual Studio 2017
 
 #install:
