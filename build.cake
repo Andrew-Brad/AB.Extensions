@@ -72,6 +72,18 @@ Task("RunTests")
 	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
 	});
 
+Task("Package")
+    .IsDependentOn("Build")
+    .Does(() => {
+        var packSettings = new DotNetCorePackSettings
+        {
+            OutputDirectory = buildArtifacts,
+            NoBuild = true
+        };
+ 
+         DotNetCorePack(packPath, settings);
+ 
+    });
 //Task("UploadCodeCoverage")
     //.IsDependentOn("RunTests")    
     //.Does( () =>
