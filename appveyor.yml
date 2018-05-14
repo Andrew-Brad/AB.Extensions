@@ -1,20 +1,22 @@
 version: 3.0.{build}-preview
+pull_requests:  
+  do_not_increment_build_number: true
 branches:
   only:
   - master
 build_script:
 - ps: .\build.ps1
 test: off
-artifacts:
-- path: artifacts/packages/*.nupkg
+artifacts:  
+- path: .\artifacts\**\*.nupkg
+  name: NuGet
 deploy:
-- provider: NuGet
-  server: 
+- provider: NuGet   
   api_key:
     secure: h64tYKeo97gSp/LH8V//qtd5nw/XFygDycymCl9eYRuUIHLCnHqiFaaKes+15wIL
   skip_symbols: true
-#  on:
-#    branch: dev
+  on:
+    branch: master
 notifications:
 - provider: Email
   to:
@@ -32,6 +34,7 @@ image: Visual Studio 2017
 #---------------------------------#
 #  Skip builds for doc changes    #
 #---------------------------------#
+#https://andrewlock.net/publishing-your-first-nuget-package-with-appveyor-and-myget/
 skip_commits:
   # Regex for matching commit message
   message: /docs.*/
