@@ -68,7 +68,7 @@ Task("RunTests")
     .IsDependentOn("Clean")
     .Does( () =>
 	{   
-		var settings = new DotNetCoreTestSettings { Configuration = configuration };
+		var settings = new DotNetCoreTestSettings { Configuration = configuration, NoBuild = true };
 	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
 	});
 
@@ -78,6 +78,7 @@ Task("Package")
         var packSettings = new DotNetCorePackSettings
         {
             OutputDirectory = buildArtifacts,
+			Configuration = configuration,
             NoBuild = true
         };
  
