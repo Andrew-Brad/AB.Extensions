@@ -81,7 +81,7 @@ Task("Package")
             NoBuild = true
         };
  
-         DotNetCorePack(buildArtifacts);
+         DotNetCorePack(packPath,packSettings);
  
     });
 //Task("UploadCodeCoverage")
