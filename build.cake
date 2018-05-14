@@ -103,6 +103,6 @@ Task("Default")
   .IsDependentOn("Build")
   .IsDependentOn("RunTests");
   //.IsDependentOn("UploadCodeCoverage");
-  //.IsDependentOn("Pack");
+  .IsDependentOn("Package");
 
 RunTarget(target);
