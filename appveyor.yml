@@ -7,6 +7,8 @@ branches:
 build_script:
 - ps: .\build.ps1
 test: off
+nuget:  
+  disable_publish_on_pr: true
 artifacts:  
 - path: .\artifacts\**\*.nupkg
   name: NuGet
@@ -17,6 +19,7 @@ deploy:
   skip_symbols: true
   on:
     branch: master
+    appveyor_repo_tag: true
 notifications:
 - provider: Email
   to:

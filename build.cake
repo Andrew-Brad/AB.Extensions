@@ -68,10 +68,23 @@ Task("RunTests")
     .IsDependentOn("Clean")
     .Does( () =>
 	{   
-		var settings = new DotNetCoreTestSettings { Configuration = configuration };
+		var settings = new DotNetCoreTestSettings { Configuration = configuration, NoBuild = true };
 	    DotNetCoreTest("./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj", settings);
 	});
 
+Task("Package")
+    .IsDependentOn("Build")
+    .Does(() => {
+        var packSettings = new DotNetCorePackSettings
+        {
+            OutputDirectory = buildArtifacts,
+			Configuration = configuration,
+            NoBuild = true
+        };
+ 
+         DotNetCorePack(packPath,packSettings);
+ 
+    });
 //Task("UploadCodeCoverage")
     //.IsDependentOn("RunTests")    
     //.Does( () =>
@@ -89,8 +102,8 @@ Task("RunTests")
 
 Task("Default")
   .IsDependentOn("Build")
-  .IsDependentOn("RunTests");
+  .IsDependentOn("RunTests")
   //.IsDependentOn("UploadCodeCoverage");
-  //.IsDependentOn("Pack");
+  .IsDependentOn("Package");
 
 RunTarget(target);
