@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using static AB.Extensions.Common.StringConstants;
 
 namespace AB.Extensions
@@ -6,28 +6,34 @@ namespace AB.Extensions
     public class ConsoleExtensions
     {
         /// <summary>
-        /// A simple <see cref="Console.WriteLine"/> but with a foreground color toggle to keep your code clean.
+        /// A simple <see cref="Console.WriteLine"/> but with color arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="color"></param>
-        public static void WriteLineWithColor(string message, ConsoleColor color)
+        public static void WriteLineWithColor(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
         {
-            Console.ForegroundColor = color;
+            // Capture existing colors:
+            var foreColor = Console.ForegroundColor;
+            var backColor = Console.BackgroundColor;
+            Console.ForegroundColor = foregroundColor;
+            Console.BackgroundColor = backgroundColor;
             Console.WriteLine(message);
-            Console.ResetColor();
+            Console.ForegroundColor = foreColor;
+            Console.BackgroundColor = backColor;
         }
 
         /// <summary>
-        /// A simple <see cref="Console.Write"/> but with a foreground color toggle to keep your code clean.
+        /// A simple <see cref="Console.Write"/> but with color arguments.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="color"></param>
-        public static void WriteWithColor(string message, ConsoleColor color)
+        /// <param name="foregroundColor"></param>
+        public static void WriteWithColor(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
         {
-            //Capture existing colors:
+            // Capture existing colors:
             var foreColor = Console.ForegroundColor;
             var backColor = Console.BackgroundColor;
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = foregroundColor;
+            Console.BackgroundColor = backgroundColor;
             Console.Write(message);
             Console.ForegroundColor = foreColor;
             Console.BackgroundColor = backColor;
@@ -38,10 +44,7 @@ namespace AB.Extensions
         /// </summary>
         public static void ClearCurrentConsoleLine()
         {
-            int currentLineCursor = Console.CursorTop;
-            Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(Delimiters.Space.PadRight(Console.BufferWidth));
-            Console.SetCursorPosition(0, currentLineCursor);
+            ClearConsoleLine(Console.CursorTop);
         }
 
         /// <summary>
@@ -50,12 +53,12 @@ namespace AB.Extensions
         /// <param name="lineNumber">The line number from the top of the console.</param>
         public static void ClearConsoleLine(int lineNumber)
         {
-            //Capture existing cursor position:
+            // Capture existing cursor position:
             int cursorLeft = Console.CursorLeft;
             int cursorTop = Console.CursorTop;
             Console.SetCursorPosition(0, lineNumber);
             Console.Write(Delimiters.Space.PadRight(Console.BufferWidth - 1));
-            Console.SetCursorPosition(cursorLeft, cursorTop);
+            Console.SetCursorPosition(cursorLeft, cursorTop == 0 ? 0 : cursorTop); // 0 check for out of range exception (top line)
         }
 
         /// <summary>
@@ -75,7 +78,7 @@ namespace AB.Extensions
             //Clear line for corner cases:
             ClearCurrentConsoleLine();
             //Print Line:
-            if (message.Length > Console.WindowWidth) WriteWithColor(message.Substring(0, Console.WindowWidth - 1), color);
+            if (message.Length >= Console.WindowWidth) WriteWithColor(message.Substring(0, Console.WindowWidth - 1), color);
             else WriteWithColor(message, color);
             //Reset to original position:
             Console.SetCursorPosition(cursorLeft, cursorTop);
