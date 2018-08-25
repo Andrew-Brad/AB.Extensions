@@ -76,7 +76,7 @@ namespace AB.Extensions
             {
                 public static class Headers
                 {
-                    //Grabbed from the SO question http://stackoverflow.com/questions/11037004/asp-mvc-are-there-any-constants-for-the-default-http-headers
+                    // Grabbed from this SO link: http://stackoverflow.com/questions/11037004/asp-mvc-are-there-any-constants-for-the-default-http-headers
                     ///<summary>Content-Types that are acceptable</summary>
                     public const string Accept = "Accept";
                     ///<summary>Character sets that are acceptable</summary>
@@ -142,7 +142,7 @@ namespace AB.Extensions
                 }
                 public static class MimeTypes
                 {
-                    //All grabbed from this SO question. http://stackoverflow.com/questions/10362140/asp-mvc-are-there-any-constants-for-the-default-content-types
+                    // Grabbed from this SO link: http://stackoverflow.com/questions/10362140/asp-mvc-are-there-any-constants-for-the-default-content-types
 
                     ///<summary>Used to denote the encoding necessary for files containing JavaScript source code. The alternative MIME type for this file type is text/javascript.</summary>
                     public const string ApplicationXJavascript = "application/x-javascript";
