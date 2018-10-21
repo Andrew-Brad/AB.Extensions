@@ -18,7 +18,7 @@ namespace AB.Extensions.Tests
             //Arrange
 
             //Act
-            int firstDigit = givenNumber.FirstDigit();
+            int firstDigit = givenNumber.LeadingDigit();
 
             //Assert
             Assert.Equal(expectedFirstDigit, firstDigit);
