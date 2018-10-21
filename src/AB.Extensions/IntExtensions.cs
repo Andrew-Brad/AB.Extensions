@@ -21,11 +21,5 @@ namespace AB.Extensions
                     ? (value < 10000000) ? value / 1000000 : value / 10000000
                     : (value < 1000000000) ? value / 100000000 : value / 1000000000;
         }
-
-        // todo:
-        // int64?
-        // extra methods for return types for micro digits? (first digit is always 1-9
-        // fix console extensions comments
-        // datetime tests - crush some tests into [Theory]
     }
 }
