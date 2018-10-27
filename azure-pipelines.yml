@@ -10,7 +10,7 @@ variables:
   buildConfiguration: 'Release'
 
 # Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
-name: $(date:yyyyMMdd)$(rev:.r)
+name: $0.(date:yyyyMMdd)$(rev:.r)
 
 steps:
 - script: echo '$(Build.BuildNumber)'
