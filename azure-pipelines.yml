@@ -22,7 +22,7 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+    arguments: '--configuration $(buildConfiguration) --logger trx'
     displayName: 'Run Unit Tests'
 
 #- script: dotnet publish 
