@@ -10,7 +10,7 @@ variables:
   buildConfiguration: 'Release'
 
 # Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
-name: $(date:yyyyMMdd)$(rev:.r)
+name: 0.$(date:yyyyMMdd)$(rev:.r)
 
 steps:
 - script: echo '$(Build.BuildNumber)'
@@ -39,11 +39,11 @@ steps:
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
     packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
     #nobuild: true # Optional
-    versioningScheme: 'byPrereleaseNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
+    versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
-    majorVersion: 0 # Required when versioningScheme == byPrereleaseNumber
-    minorVersion: $(date:yyyyMMdd) # Required when versioningScheme == byPrereleaseNumber
-    patchVersion: $(rev:.r) # Required when versioningScheme == byPrereleaseNumber
+    #majorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
+    #minorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
+    #patchVersion: 1 # Required when versioningScheme == byPrereleaseNumber
     #buildProperties: # Optional
     verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
 
