@@ -13,7 +13,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 # First test task using VSTest Runner
-- script: dotnet test ./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --logger trx
+#- script: dotnet test ./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --logger trx
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
@@ -23,4 +23,6 @@ steps:
   inputs:
     command: test
     projects: './test/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: 
+      '--configuration $(buildConfiguration)'
+      '--logger trx'
