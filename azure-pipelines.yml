@@ -25,7 +25,7 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build --logger trx'
+    arguments: '--configuration $(buildConfiguration) --logger trx' # --no-build  (dependent on pack/publish?)
     #nobuild: true # Optional
     displayName: 'Run Unit Tests'
 
