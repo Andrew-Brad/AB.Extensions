@@ -23,6 +23,5 @@ namespace AB.Extensions.Tests
             //Assert
             Assert.Equal(expectedFirstDigit, firstDigit);
         }
-
     }
 }

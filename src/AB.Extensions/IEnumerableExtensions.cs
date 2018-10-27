@@ -225,5 +225,29 @@ namespace AB.Extensions
             foreach (T element in source)
                 action(element);
         }
+
+        /// <summary>
+        /// Returns true if all elements are monotonically increasing in this IEnumerable. Non-strict.
+        /// Will only enumerate a single time.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="elements"></param>
+        /// <returns></returns>
+        public static bool IsMonotonicallyIncreasing<T>(this IEnumerable<T> elements) where T : IComparable<T>
+        {
+            using (var e = elements.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                    return true;
+                T prev = e.Current;
+                while (e.MoveNext())
+                {
+                    if (prev.CompareTo(e.Current) > 0)
+                        return false;
+                    prev = e.Current;
+                }
+                return true;
+            }
+        }
     }
 }
