@@ -10,8 +10,11 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    projects: '**/AB.Extensions.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
@@ -20,6 +23,9 @@ steps:
     projects: '**/*Tests.csproj'
     arguments: '--logger trx --configuration $(buildConfiguration)'
 
+- task: PublishBuildArtifacts@1
+
+# Build agent not finding the trx files...
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
