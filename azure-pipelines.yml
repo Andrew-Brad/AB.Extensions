@@ -15,18 +15,19 @@ steps:
     command: build
     projects: '**/AB.Extensions.csproj'
     arguments: '--configuration $(buildConfiguration)'
+    name: 'Testing Named Task'
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--logger trx --configuration $(buildConfiguration)'
-
-- task: PublishBuildArtifacts@1
+    arguments: '--configuration $(buildConfiguration) --logger trx'
 
 # Build agent not finding the trx files...
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
+
+- task: PublishBuildArtifacts@1
