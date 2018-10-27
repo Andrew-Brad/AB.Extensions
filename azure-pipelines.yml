@@ -22,16 +22,16 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --logger trx'
+    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
     displayName: 'Run Unit Tests'
 
 #- script: dotnet publish 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: publish
-    projects: '**/AB.Extensions.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    name: 'dotnet publish'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: publish
+#     projects: '**/AB.Extensions.csproj'
+#     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+#     name: 'dotnet publish'
 
 # Build agent not finding the trx files...
 - task: PublishTestResults@2
@@ -41,4 +41,7 @@ steps:
     displayName: 'Publish Test Results'
 
 # Pre-requisite task above for dotnet publish CLI
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@0
+  inputs:
+    #artifactName: 'drop'
+    targetPath: $(Build.ArtifactStagingDirectory)
