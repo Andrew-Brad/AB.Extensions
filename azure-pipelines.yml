@@ -10,7 +10,7 @@ variables:
   buildConfiguration: 'Release'
 
 # Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
-name: $0.(date:yyyyMMdd)$(rev:.r)
+name: 0.$(date:yyyyMMdd)$(rev:.r)
 
 steps:
 - script: echo '$(Build.BuildNumber)'
@@ -27,7 +27,7 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration)' # --no-build  (dependent on pack/publish?)
+    arguments: '--configuration $(buildConfiguration) --logger trx' # --no-build  (dependent on pack/publish?)
     #nobuild: true # Optional
     displayName: 'Run Unit Tests'
 
@@ -41,9 +41,9 @@ steps:
     #nobuild: true # Optional
     versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
-    #majorVersion: '0' # Required when versioningScheme == byPrereleaseNumber
-    #minorVersion: '$(date:yyyyMMdd)' # Required when versioningScheme == byPrereleaseNumber
-    #patchVersion: '$(rev:.r)-$(SourceBranchName)' # Required when versioningScheme == byPrereleaseNumber
+    #majorVersion: '1' # Required when versioningScheme == byPrereleaseNumber
+    #minorVersion: '0' # Required when versioningScheme == byPrereleaseNumber
+    #patchVersion: '0' # Required when versioningScheme == byPrereleaseNumber
     #buildProperties: # Optional
     verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
 
