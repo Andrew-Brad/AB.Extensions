@@ -19,7 +19,7 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 # Second test task using CLI Runner
-- task: DotNetCoreCLITest@2
+- task: DotNetCoreCLI@2
   inputs:
     command: test
     projects: './test/*Tests/*.csproj'
