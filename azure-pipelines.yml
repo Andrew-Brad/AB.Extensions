@@ -12,8 +12,8 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet test <test-project> --logger trx
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+- script: dotnet test ./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --logger trx
+#- task: PublishTestResults@2
+#  inputs:
+#    testRunner: VSTest
+#    testResultsFiles: '**/*.trx'
