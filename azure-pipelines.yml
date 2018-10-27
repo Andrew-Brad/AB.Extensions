@@ -46,16 +46,16 @@ steps:
     #buildProperties: # Optional
     verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
 
-# Build agent not finding the trx files...
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-    displayName: 'Publish Test Results'
-
 # Pre-requisite task above for dotnet publish CLI
 - task: PublishPipelineArtifact@0
   inputs:
     #artifactName: 'drop'
     targetPath: $(Build.ArtifactStagingDirectory)
     displayName: 'Publish Pipeline Artifacts'
+
+# Build agent not finding the trx files...
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+    displayName: 'Publish Test Results'
