@@ -25,13 +25,21 @@ steps:
     arguments: '--configuration $(buildConfiguration) --logger trx'
     displayName: 'Run Unit Tests'
 
-#- script: dotnet publish 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: publish
-#     projects: '**/AB.Extensions.csproj'
-#     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-#     name: 'dotnet publish'
+# dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    configuration: '$(buildConfiguration)'
+    packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
+    packDirectory: '$(build.artifactStagingDirectory)' # Optional
+    nobuild: true # Optional
+    versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
+    #versionEnvVar: # Required when versioningScheme == byEnvVar
+    #majorVersion: '1' # Required when versioningScheme == byPrereleaseNumber
+    #minorVersion: '0' # Required when versioningScheme == byPrereleaseNumber
+    #patchVersion: '0' # Required when versioningScheme == byPrereleaseNumber
+    #buildProperties: # Optional
+    verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
 
 # Build agent not finding the trx files...
 - task: PublishTestResults@2
@@ -45,3 +53,4 @@ steps:
   inputs:
     #artifactName: 'drop'
     targetPath: $(Build.ArtifactStagingDirectory)
+    displayName: 'Publish Pipeline Artifacts'
