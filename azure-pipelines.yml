@@ -9,6 +9,9 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+# Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
+name: '$(date:yyyyMMdd)$(rev:.r)'
+
 steps:
 - task: DotNetCoreCLI@2
   inputs:
@@ -34,8 +37,8 @@ steps:
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
     packDirectory: '$(build.artifactStagingDirectory)' # Optional
     nobuild: true # Optional
-    versioningScheme: 'byEnvVar' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
-    versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
+    versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
+    #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
     #majorVersion: '1' # Required when versioningScheme == byPrereleaseNumber
     #minorVersion: '0' # Required when versioningScheme == byPrereleaseNumber
     #patchVersion: '0' # Required when versioningScheme == byPrereleaseNumber
