@@ -12,13 +12,8 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-# First test task using VSTest Runner
-#- script: dotnet test ./test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --logger trx
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-# Second test task using CLI Runner
+
+# Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
   inputs:
     command: test
@@ -26,3 +21,8 @@ steps:
     arguments: 
       '--configuration $(buildConfiguration)'
       '--logger trx'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
