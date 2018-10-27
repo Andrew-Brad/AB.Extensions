@@ -13,6 +13,7 @@ variables:
 name: 1.0.0-$(date:yyyyMMdd)$(rev:.r)
 
 steps:
+- script: echo '$(Build.BuildNumber)'
 - task: DotNetCoreCLI@2
   inputs:
     command: build
@@ -36,7 +37,7 @@ steps:
     configuration: '$(buildConfiguration)'
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
     packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
-    nobuild: true # Optional
+    #nobuild: true # Optional
     versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
     #majorVersion: '1' # Required when versioningScheme == byPrereleaseNumber
