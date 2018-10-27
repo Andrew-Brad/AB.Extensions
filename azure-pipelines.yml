@@ -25,8 +25,8 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --logger trx'
-    nobuild: true # Optional
+    arguments: '--configuration $(buildConfiguration) --no-build --logger trx'
+    #nobuild: true # Optional
     displayName: 'Run Unit Tests'
 
 # dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages
@@ -35,7 +35,7 @@ steps:
     command: 'pack'
     configuration: '$(buildConfiguration)'
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
-    packDirectory: '$(build.artifactStagingDirectory)' # Optional
+    packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
     nobuild: true # Optional
     versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
