@@ -62,5 +62,23 @@ namespace AB.Extensions.Tests
             //Assert
             Assert.True(Enumerable.SequenceEqual(assertionList, expected));
         }
+
+        [Theory]
+        [InlineData(new int[] { 0, 0 }, true)]
+        [InlineData(new int[] { 0, 1 }, true)]
+        [InlineData(new int[] { 1, 1 }, true)]
+        [InlineData(new int[] { 2, 1 }, false)]
+        [InlineData(new int[] { -1, 1 }, true)]
+        [InlineData(new int[] { -9, -6, -1, 0, 1 }, true)]
+        [InlineData(new int[] { -9, -10, -1, 0, 1 }, false)]
+        public void Is_Monotonically_Increasing_Get_Enumerator(int[] inputList, bool isIncreasingAssert)
+        {
+            //Arrange
+
+            //Act
+            bool isIncreasing = inputList.IsMonotonicallyIncreasing();
+            //Assert
+            Assert.Equal(isIncreasingAssert, isIncreasing);
+        }
     }
 }
