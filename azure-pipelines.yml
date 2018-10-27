@@ -2,7 +2,7 @@
 # Build and test ASP.NET Core projects targeting .NET Core.
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
+# File matching patterns reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=vsts
 pool:
   vmImage: 'VS2017-Win2016'
 
@@ -19,9 +19,8 @@ steps:
     command: test
     projects: '**/*Tests.csproj'
     arguments: '--logger trx --configuration $(buildConfiguration)'
-    #arguments: ['--configuration $(buildConfiguration)', '']
 
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
-    testResultsFiles: '*.trx'
+    testResultsFiles: '**/*.trx'
