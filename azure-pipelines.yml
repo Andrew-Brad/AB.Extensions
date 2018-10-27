@@ -18,8 +18,8 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-    #arguments: ['--configuration $(buildConfiguration)', '--logger trx']
+    arguments: '--configuration $(buildConfiguration) --logger trx'
+    #arguments: ['--configuration $(buildConfiguration)', '']
 
 - task: PublishTestResults@2
   inputs:
