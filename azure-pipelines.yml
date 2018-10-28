@@ -3,42 +3,60 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 # File matching patterns reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=vsts
+# Task catalog reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/index?view=vsts
+# The dotnet CLI Task full doc with arguments: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=vsts
+
 pool:
   vmImage: 'VS2017-Win2016'
 
 variables:
   buildConfiguration: 'Release'
+  artifactName: 'drop' # default value
 
 # Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
 name: 0.$(date:yyyyMMdd)$(rev:.r)
 
 steps:
 - script: echo '$(Build.BuildNumber)'
+  displayName: 'Echo build number'
 
 - task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+    configuration: '$(BuildConfiguration)' # Optional
+    #arguments: '--configuration $(buildConfiguration)'    
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
   inputs:
     command: build
-    projects: '**/AB.Extensions.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-    displayName: 'dotnet build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
+    verbosityRestore: 'diagnostic' # Options: -, quiet, minimal, normal, detailed, diagnostic
+    configuration: '$(BuildConfiguration)' # Optional    
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
+  displayName: 'Run Unit Tests'
   inputs:
     command: test
-    projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --logger trx' # --no-build  (dependent on pack/publish?)
-    #nobuild: true # Optional
-    displayName: 'Run Unit Tests'
+    projects: '**/*.Tests.csproj'
+    #arguments: '--logger trx' # may be an assumption here that the VS build agent automatically adds this
+    configuration: '$(BuildConfiguration)' # Optional
+    publishTestResults: true # Optional
+    nobuild: true # Optional - will cause the agent to set a --results-directory arg automagically    
 
 # dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages
 - task: DotNetCoreCLI@2
+  displayName: 'Pack Nuget Package'
   inputs:
     command: 'pack'
     configuration: '$(buildConfiguration)'
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
     packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
-    #nobuild: true # Optional
+    nobuild: true # Optional
     versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
     #majorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
@@ -47,16 +65,15 @@ steps:
     #buildProperties: # Optional
     verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
 
-# Build agent not finding the trx files...
 - task: PublishTestResults@2
+  displayName: 'Publish Test Results'
   inputs:
     testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-    displayName: 'Publish Test Results'
+    testResultsFiles: '$(Agent.TempDirectory)/*.trx'    
 
 # Pre-requisite task above for dotnet publish CLI
 - task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifacts'
   inputs:
-    #artifactName: 'drop'
-    targetPath: $(Build.ArtifactStagingDirectory)
-    displayName: 'Publish Pipeline Artifacts'
+    artifactName: $(artifactName)
+    targetPath: $(Build.ArtifactStagingDirectory)    
