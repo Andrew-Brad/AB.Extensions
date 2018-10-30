@@ -24,8 +24,8 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: '**/*.csproj'
-    configuration: '$(BuildConfiguration)' # Optional
+    projects: '**/*.csproj'    
+    verbosityRestore: 'diagnostic' # Options: -, quiet, minimal, normal, detailed, diagnostic
     #arguments: '--configuration $(buildConfiguration)'    
 
 - task: DotNetCoreCLI@2
@@ -35,7 +35,6 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
     verbosityRestore: 'diagnostic' # Options: -, quiet, minimal, normal, detailed, diagnostic
-    configuration: '$(BuildConfiguration)' # Optional    
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
@@ -43,10 +42,15 @@ steps:
   inputs:
     command: test
     projects: '**/*.Tests.csproj'
-    #arguments: '--logger trx' # may be an assumption here that the VS build agent automatically adds this
-    configuration: '$(BuildConfiguration)' # Optional
+    arguments: '--configuration $(buildConfiguration)' # --logger trx may be an assumption here that the VS build agent automatically adds this
     publishTestResults: true # Optional
     nobuild: true # Optional - will cause the agent to set a --results-directory arg automagically    
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '$(Agent.TempDirectory)/*.trx' 
 
 # dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages
 - task: DotNetCoreCLI@2
@@ -63,13 +67,17 @@ steps:
     #minorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
     #patchVersion: 1 # Required when versioningScheme == byPrereleaseNumber
     #buildProperties: # Optional
-    verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic
+    verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic   
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
+# this has to be a Nuget Task and not a dotnet Task - open issue @ https://github.com/Microsoft/azure-pipelines-tasks/issues/7160
+- task: NuGetCommand@2 
+  displayName: 'Push NUKPG to MyGet'
   inputs:
-    testRunner: VSTest
-    testResultsFiles: '$(Agent.TempDirectory)/*.trx'    
+    command: 'push'
+    nuGetFeedType: external
+    publishFeedCredentials: 'MyGet Trial'
+    versioningScheme: 'byBuildNumber'
+    #versionEnvVar: Version
 
 # Pre-requisite task above for dotnet publish CLI
 - task: PublishPipelineArtifact@0
