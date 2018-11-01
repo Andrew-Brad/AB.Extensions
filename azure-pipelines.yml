@@ -34,7 +34,7 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
-    verbosityRestore: 'diagnostic' # Options: -, quiet, minimal, normal, detailed, diagnostic
+    verbosityRestore: 'normal' # Options: -, quiet, minimal, normal, detailed, diagnostic
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2
@@ -67,7 +67,7 @@ steps:
     #minorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
     #patchVersion: 1 # Required when versioningScheme == byPrereleaseNumber
     #buildProperties: # Optional
-    verbosityPack: 'diagnostic' # Options: quiet, minimal, normal, detailed, diagnostic   
+    verbosityPack: 'normal' # Options: quiet, minimal, normal, detailed, diagnostic   
 
 # this has to be a Nuget Task and not a dotnet Task - open issue @ https://github.com/Microsoft/azure-pipelines-tasks/issues/7160
 - task: NuGetCommand@2 
@@ -77,6 +77,19 @@ steps:
     nuGetFeedType: external
     publishFeedCredentials: 'MyGet Trial'
     versioningScheme: 'byBuildNumber'
+    verbosityPaush: 'detailed'
+    #versionEnvVar: Version
+
+# this has to be a Nuget Task and not a dotnet Task - open issue @ https://github.com/Microsoft/azure-pipelines-tasks/issues/7160
+- task: NuGetCommand@2 
+  displayName: 'Push NUKPG to VSTS Nuget Feed'
+  inputs:
+    command: 'push'
+    nuGetFeedType: internal
+    publishVstsFeed: 'Ab.Extensions-CI'
+    versioningScheme: 'byBuildNumber'
+    verbosityPaush: 'detailed'
+    #packDestination: '$(Build.ArtifactStagingDirectory)' # Optional
     #versionEnvVar: Version
 
 # Pre-requisite task above for dotnet publish CLI
