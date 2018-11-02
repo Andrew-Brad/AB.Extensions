@@ -14,7 +14,8 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>2.1.0</Version>
+    <VersionPrefix>2.1.0</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <PackageReleaseNotes>v2.1.0: Added paging objects (request and response).</PackageReleaseNotes>
   </PropertyGroup>
 

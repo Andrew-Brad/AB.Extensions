@@ -9,16 +9,26 @@
 pool:
   vmImage: 'VS2017-Win2016'
 
+# Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
+name: $(date:yyyyMMdd)$(rev:.r)
+
 variables:
   buildConfiguration: 'Release'
   artifactName: 'drop' # default value
-
-# Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
-name: 0.$(date:yyyyMMdd)$(rev:.r)
+  major: '0'
+  minor: '0'
+  patch: $[counter('versioncounter')]
 
 steps:
-- script: echo '$(Build.BuildNumber)'
+- script: echo '$(Build.BuildNumber) with output path $(OutputPath)'
   displayName: 'Echo build number'
+
+# - task: PowerShell@1
+#   displayName: ListVariables.ps1
+#   inputs:
+#     scriptType: filePath
+#     scriptName: "$(repo.BuildScripts)/ListVariables.ps1"
+#     arguments: ''
 
 - task: DotNetCoreCLI@2
   displayName: Restore
@@ -61,13 +71,14 @@ steps:
     packagesToPack: '**/AB.Extensions.csproj' # Required when command == pack
     packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
     nobuild: true # Optional
-    versioningScheme: 'byBuildNumber' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
+    versioningScheme: 'off' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber
+    arguments: '--version-suffix $(Build.BuildNumber)'
     #versionEnvVar: '$(Build.BuildNumber)' # Required when versioningScheme == byEnvVar
-    #majorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
-    #minorVersion: 1 # Required when versioningScheme == byPrereleaseNumber
-    #patchVersion: 1 # Required when versioningScheme == byPrereleaseNumber
-    #buildProperties: # Optional
-    verbosityPack: 'normal' # Options: quiet, minimal, normal, detailed, diagnostic   
+    #majorVersion: '$(major)' # Required when versioningScheme == byPrereleaseNumber
+    #minorVersion: '$(minor)' # Required when versioningScheme == byPrereleaseNumber
+    #patchVersion: '$(patch)' # Required when versioningScheme == byPrereleaseNumber
+    buildProperties: versionSuffix=$(Build.BuildNumber) # Optional
+    verbosityPack: 'detailed' # Options: quiet, minimal, normal, detailed, diagnostic   
 
 # this has to be a Nuget Task and not a dotnet Task - open issue @ https://github.com/Microsoft/azure-pipelines-tasks/issues/7160
 - task: NuGetCommand@2 
@@ -77,8 +88,7 @@ steps:
     nuGetFeedType: external
     publishFeedCredentials: 'MyGet Trial'
     versioningScheme: 'byBuildNumber'
-    verbosityPaush: 'detailed'
-    #versionEnvVar: Version
+    verbosityPaush: 'detailed'    
 
 # this has to be a Nuget Task and not a dotnet Task - open issue @ https://github.com/Microsoft/azure-pipelines-tasks/issues/7160
 - task: NuGetCommand@2 
@@ -89,8 +99,7 @@ steps:
     publishVstsFeed: 'Ab.Extensions-CI'
     versioningScheme: 'byBuildNumber'
     verbosityPaush: 'detailed'
-    #packDestination: '$(Build.ArtifactStagingDirectory)' # Optional
-    #versionEnvVar: Version
+    #packDestination: '$(Build.ArtifactStagingDirectory)' # Optional - docs also say default is $(Build.ArtifactStagingDirectory)/*.nupkg    
 
 # Pre-requisite task above for dotnet publish CLI
 - task: PublishPipelineArtifact@0
