@@ -21,3 +21,15 @@ Import easily by editing your Csproj:
 Alternatively with dotnet CLI:
 
 ``dotnet add package AB.Extensions``
+
+
+## CI Packaging
+The VSTS feed which hosts the packages uploaded by CI is publically available at: https://zep519.pkgs.visualstudio.com/_packaging/Ab.Extensions-CI/nuget/v3/index.json
+
+Release packages are uploaded to Nuget.org under the following conditions:
+- master branch
+- manual trigger of build
+- all previous steps succeeded in the build
+- when manually queuing the build, a variable of name ```PushReleaseNuget``` is provided with value ```confirm```
+
+This means that when making code modifications, I need to respect the rules of SemVer in the csproj metadata.
