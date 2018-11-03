@@ -115,4 +115,4 @@ steps:
     command: 'push'
     nuGetFeedType: external
     publishFeedCredentials: 'Nuget'    
-    verbosityPush: 'diagnostic'
+    verbosityPush: 'detailed'
