@@ -185,6 +185,7 @@ namespace AB.Extensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
+        // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
         public static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;
@@ -198,9 +199,7 @@ namespace AB.Extensions
             }
         }
 
-        #region Randoms
-
-        //grabbed from http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+        // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
         public static class ThreadSafeRandom
         {
             [ThreadStatic]
@@ -211,15 +210,12 @@ namespace AB.Extensions
                 get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
             }
         }
-
-
+        
         //public static void NaiveNonRandomShuffle<T>(this IList<T> list)
         //{
         //    list.OrderBy(a => Guid.NewGuid());
         //}               
-
-        #endregion Randoms
-
+        
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)

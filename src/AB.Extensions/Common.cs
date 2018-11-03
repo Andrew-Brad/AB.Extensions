@@ -50,12 +50,12 @@ namespace AB.Extensions
         }
 
         /// <summary>
-        /// Various commonly used strings which are highly useful to have as global constants.
+        /// Commonly used strings which are handy to have as global constants here instead of magic strings.
         /// </summary>
         public static class StringConstants
         {
             /// <summary>
-            /// Some commonly used (and suggested) delimiters for everyday use.
+            /// Commonly recommended delimiters for everyday use.
             /// </summary>
             public static class Delimiters
             {
@@ -63,20 +63,20 @@ namespace AB.Extensions
                 public const string Tilde = "~";
                 public const string Pipe = "|";
                 public const string Space = " ";
-                public const Char CommaChar = ',';
-                public const Char TildeChar = '~';
-                public const Char PipeChar = '|';
-                public const Char SpaceChar = ' ';
+                public const char CommaChar = ',';
+                public const char TildeChar = '~';
+                public const char PipeChar = '|';
+                public const char SpaceChar = ' ';
             }
 
             /// <summary>
             /// Commonly used strings that are part of the MIME types in the HTTP spec. Only a few are in .Net so this class contains a more complete listing.
             /// </summary>
+            /// Attribution: http://stackoverflow.com/questions/11037004/asp-mvc-are-there-any-constants-for-the-default-http-headers
             public static class HTTP
             {
                 public static class Headers
-                {
-                    // Grabbed from this SO link: http://stackoverflow.com/questions/11037004/asp-mvc-are-there-any-constants-for-the-default-http-headers
+                {                    
                     ///<summary>Content-Types that are acceptable</summary>
                     public const string Accept = "Accept";
                     ///<summary>Character sets that are acceptable</summary>

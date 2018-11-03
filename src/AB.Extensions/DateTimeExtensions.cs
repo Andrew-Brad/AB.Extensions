@@ -14,16 +14,27 @@ namespace AB.Extensions
                dt >= startDate && dt <= endDate :
                dt.Date >= startDate.Date && dt.Date <= endDate.Date;
         }
+
         public static bool IsLeapYear(this DateTime value)
         {
             return (DateTime.DaysInMonth(value.Year, 2) == 29);
         }
 
+        /// <summary>
+        /// Returns true if Saturday or Sunday.
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
         public static bool IsWeekend(this DayOfWeek d)
         {
             return !d.IsWeekday();
         }
 
+        /// <summary>
+        /// Returns true if we're on this Monday through Friday plane.
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
         public static bool IsWeekday(this DayOfWeek d)
         {
             switch (d)

@@ -3,13 +3,17 @@ using static AB.Extensions.Common.StringConstants;
 
 namespace AB.Extensions
 {
+    /// <summary>
+    /// A collection of handy methods to enable pretty printing to a console.
+    /// </summary>
     public class ConsoleExtensions
     {
         /// <summary>
-        /// A simple <see cref="Console.WriteLine"/> but with color arguments.
+        /// /// A simple <see cref="Console.WriteLine"/> but with color arguments.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="color"></param>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
         public static void WriteLineWithColor(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
         {
             // Capture existing colors:
@@ -27,6 +31,7 @@ namespace AB.Extensions
         /// </summary>
         /// <param name="message"></param>
         /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
         public static void WriteWithColor(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
         {
             // Capture existing colors:

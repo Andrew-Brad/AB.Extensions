@@ -6,17 +6,25 @@
     /// </summary>
     public class PagingResponse
     {
+        /// <summary>
+        /// You are on this page, with respect to the total possible results.
+        /// </summary>
         public uint CurrentPage { get; set; }
+
+        /// <summary>
+        /// There are this many pages of data available.
+        /// </summary>
         public uint TotalPages { get; set; }
 
         /// <summary>
-        /// The count of results for the given paged response collection.
+        /// The count of results for the given page in the response collection.
         /// </summary>
         public uint ResultCount { get; set; }
+
         /// <summary>
         /// Grand total of records in the underlying collection.
         /// </summary>
-        public uint Total { get; set; }
+        public uint TotalCount { get; set; }
 
         /// <summary>
         /// Default empty constructor.
@@ -26,14 +34,16 @@
         /// <summary>
         /// Constructor with all parameters.
         /// </summary>
-        /// <param name="pageNumber">The current page number.</param>
-        /// <param name="resultCount">The count of objects being returned in the associated response.</param>
-        /// <param name="grandTotal">The grand total of objects in the underlying collection.</param>
-        public PagingResponse(uint pageNumber, uint resultCount, uint grandTotal)
+        /// <param name="currentPage"></param>
+        /// <param name="totalPages"></param>
+        /// <param name="resultCount"></param>
+        /// <param name="totalCount"></param>
+        public PagingResponse(uint currentPage, uint totalPages, uint resultCount, uint totalCount)
         {
-            CurrentPage = pageNumber;
+            CurrentPage = currentPage;
+            TotalPages = totalPages;
             ResultCount = resultCount;
-            Total = grandTotal;
+            TotalCount = totalCount;
         }
     }    
 }

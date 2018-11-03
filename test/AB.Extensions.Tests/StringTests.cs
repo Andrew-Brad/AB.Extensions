@@ -1,83 +1,72 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AB.Extensions;
-using System;
 using static AB.Extensions.Common;
+using Xunit;
 
 namespace ABExtensions.Tests
 {
     public class StringTests
     {
-        [Fact]
-        public void ReverseString_1()
+        [Theory]
+        [InlineData("hi!", "!ih")]
+        [InlineData("weRdNab", "baNdRew")]
+        [InlineData("", "")]
+        [InlineData(null, null)]
+
+        public void ReverseString_1(string input, string expected)
         {
-            string input = "hi!";
-            string expected = "!ih";
-            string operation = input.ToReverseString();
-            Assert.Equal(expected, operation);
+            // Act
+            string reversed = input.ToReverseString();
+
+            // Assert
+            Assert.Equal(expected, reversed);
         }
 
         [Fact]
-        public void ReverseString_2()
-        {
-            string input = "weRdNab";
-            string expected = "baNdRew";
-            string operation = input.ToReverseString();
-            Assert.Equal(expected, operation);
-        }
-
-        [Fact]
-        public void ReverseString_3()
-        {
-            string input = "";
-            string expected = string.Empty;
-            string operation = input.ToReverseString();
-            Assert.Equal(expected, operation);
-        }
-
-        [Fact]
-        public void ReverseString_4()
-        {
-            string input = null;
-            string expected = null;
-            string operation = input.ToReverseString();
-            Assert.Equal(expected, operation);
-        }
-
-        [Fact]
-        public void String_ToGuid_Valid()
+        public void ToGuid_Valid_Throw_Bool()
         {
             //Arrange
             string input = "d2650790-bc80-41a9-ae63-dd55e2240296";
             Guid desiredOutput = Guid.Parse("d2650790-bc80-41a9-ae63-dd55e2240296");
+
             //Act
-            var result = input.ToGuid();
+            var result = input.ToGuid(true);
+
             //Assert
             Assert.Equal(desiredOutput, result);
         }
 
         [Fact]
-        public void String_ToGuid_Invalid()
+        public void ToGuid_Valid()
         {
             //Arrange
-            string input = "d2sdddddddddddddddddddddddddddddddddddddd650790-bc80-41a9-ae63-dd55e2240296";
-            Guid desiredOutput = Guid.Empty;
+            string input = "d2650790-bc80-41a9-ae63-dd55e2240296";
+            Guid desiredOutput = Guid.Parse("d2650790-bc80-41a9-ae63-dd55e2240296");
+
             //Act
-            var result = input.ToGuid();
+            var result = input.ToGuid(false);
+
             //Assert
-            Assert.Equal(Guid.Empty, result);
+            Assert.Equal(desiredOutput, result);
         }
 
-        [Fact]
-        public void String_ToGuid_Null()
+        [Theory]
+        [InlineData("~~~~~d2sdd650790-bc80-41a9-ae63-dd55e2240296")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void ToGuid_Invalid_Cases(string input)
         {
             //Arrange
-            string input = null;
             Guid desiredOutput = Guid.Empty;
+
             //Act
             var result = input.ToGuid();
+
             //Assert
             Assert.Equal(Guid.Empty, result);
-        }
+        }        
 
         [Fact]
         public void String_To_Enum_Type_Of()
@@ -137,5 +126,39 @@ namespace ABExtensions.Tests
             //Assert
             Assert.Equal(expectedCount, actualCount);
         }
+
+        //https://catalystsecure.com/blog/2011/05/how-many-bytes-in-a-gigabyte-my-answer-might-surprise-you/
+        [Theory]
+        [InlineData(128,"128 bytes")]
+        [InlineData(17179869184, "16 GB")]
+        [InlineData(4194304, "4 MB")]
+        [InlineData(46080, "45 KB")]
+        [InlineData(0, "0 bytes")]
+        public void FormatFileSize(long byteCount, string expectedDisplayText)
+        {
+            // Arrange
+            ulong input = (ulong)byteCount;
+
+            // Act
+            string text = input.FileSizeString();
+
+            // Assert
+            Assert.Equal(expectedDisplayText, text);
+        }
+
+        [Theory]
+        [InlineData(@"1,2,3,4,5,6,7,8,9,10",10)]
+        [InlineData(@"111,222,""33,44,55"",666,""77,88"",""99""", 6)]
+        [InlineData(null, 0)]
+        [InlineData("", 0)]
+        public void SplitQuotedCsvString(string input, int expectedCount)
+        {
+            // Act
+            IEnumerable<string> split = input.SplitQuotedCsv();
+            
+            // Assert
+            Assert.Equal(expectedCount, split.Count());
+        }
+
     }
 }

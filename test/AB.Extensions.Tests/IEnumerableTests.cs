@@ -23,16 +23,49 @@ namespace AB.Extensions.Tests
         [InlineData(1,5)]
         [InlineData(2,458)]
         [InlineData(-10,10)]
-        [InlineData(short.MinValue, short.MaxValue)]//int values throw OutOfMemoryExceptions
+        [InlineData(short.MinValue, short.MaxValue)]
+        [InlineData(byte.MinValue, byte.MaxValue)]
+        //[InlineData(0, 147483647)]
+        //[InlineData(0, 2147483647)] // certain high int values throw OutOfMemoryExceptions (unrelated to logic)
         public void Shuffle_Valid_List_Does_Shuffle(int startNumber,int totalNumbers)
         {
             //Arrange
             IList<int> orderedNumbers = Enumerable.Range(startNumber,totalNumbers).ToList();
             IList<int> shuffledNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
+            
             //Act
             shuffledNumbers.Shuffle();
+
             //Assert
             Assert.False(orderedNumbers.SequenceEqual(shuffledNumbers));
+        }
+
+        [Fact]
+        public void Shuffle_Valid_List_Handles_1_Element()
+        {
+            //Arrange
+            IList<int> orderedNumbers = Enumerable.Range(1, 1).ToList();
+            IList<int> shuffledNumbers = Enumerable.Range(1, 1).ToList();
+
+            //Act
+            shuffledNumbers.Shuffle();
+
+            //Assert
+            Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
+        }
+
+        [Fact]
+        public void Shuffle_Valid_List_Handles_0_Elements()
+        {
+            //Arrange
+            IList<int> orderedNumbers = new List<int>();
+            IList<int> shuffledNumbers = new List<int>();
+
+            //Act
+            shuffledNumbers.Shuffle();
+
+            //Assert
+            Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
         }
 
         [Fact]

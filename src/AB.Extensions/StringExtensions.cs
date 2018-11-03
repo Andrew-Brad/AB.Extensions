@@ -1,48 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AB.Extensions
 {
     public static class Extensions
     {
-        public static IEnumerable<string> SplitQuotedCSV(this string input)  //credit: http://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
-        {
-            Regex csvSplit = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
+        /// <summary>
+        /// The Regex used in <see cref="SplitQuotedCsv"/>.
+        /// </summary>
+        public static readonly Regex CsvSplitRegex = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
 
-            foreach (Match match in csvSplit.Matches(input))
+        /// <summary>
+        /// Will do a normal string split by <see cref="Common.StringConstants.Delimiters.CommaChar"/>, but will respect quoted 
+        /// pieces of the strings and keep them together.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        //Attribution: https://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
+        public static IEnumerable<string> SplitQuotedCsv(this string input)
+        {
+            if (input == null) yield break;
+            if (input.Length == 0) yield break;
+            foreach (Match match in CsvSplitRegex.Matches(input))
             {
-                //Interesting explanation of yield return here: https://www.youtube.com/watch?v=4fju3xcm21M
-                //I think it may actually be more performant than copying an array back and forth or using LINQ to return
-                yield return match.Value.TrimStart(',');
+                yield return match.Value.TrimStart(Common.StringConstants.Delimiters.CommaChar);
             }
         }
+
         public static IEnumerable<string> SplitStringByLineBreaks(this string str, bool removeEmptyLines = false)
         {
             return str.Split(new[] { "\r\n", "\r", "\n" },
                 removeEmptyLines ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
         }
+
         public static string RemoveLineBreaks(this string lines)
         {
             return lines.Replace("\r", "").Replace("\n", "");
         }
+
         public static string ReplaceLineBreaks(this string lines, string replacement)
         {
             return lines.Replace("\r\n", replacement)
                         .Replace("\r", replacement)
                         .Replace("\n", replacement);
         }
+
         public static bool IsNull<T>(this T obj) where T : class
         {
             return obj == null;
         }
+
         public static bool IsNull<T>(this T? obj) where T : struct
         {
             return !obj.HasValue;
         }
 
                 
-        //Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
+        // Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
@@ -55,17 +71,23 @@ namespace AB.Extensions
                 }
             }
         }
-        public static string ToReverseString(this string text)
+
+        /// <summary>
+        /// Reverse a string of characters, echoing null and empties.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToReverseString(this string input)
         {
-            if (text == null) return null;
-            if (text.Length == 0) return text;
-            char[] array = text.ToCharArray();
+            if (input == null) return null;
+            if (input.Length == 0) return input;
+            char[] array = input.ToCharArray();
             Array.Reverse(array);
-            return new String(array);
+            return new string(array);
         }
 
         /// <summary>
-        /// One liner for converting strings to Guids.
+        /// One liner for converting strings to Guids. Null safe.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="throwExceptionIfInvalid"></param>
@@ -100,6 +122,31 @@ namespace AB.Extensions
                 count++;
             }
             return count;
+        }
+
+        private const string bytesString = "bytes";
+        private const string kilobytesString = "KB";
+        private const string megabytesString = "MB";
+        private const string gigabytesString = "GB";
+        private static readonly string[] suffix = { bytesString, kilobytesString, megabytesString, gigabytesString };
+
+        /// <summary>
+        /// Given a number of bytes, return a string that has a nicer display value for the total in terms of kilobytes, megabytes, and gigabytes.
+        /// Assumes the IEC (non- SI) form where 1024 bytes = 1 MB.  Negative storage values don't make sense.
+        /// </summary>
+        /// <param name="fileSize"></param>
+        /// <returns>Text like '16 GB', or '128 MB'.</returns>
+        // Attribution: https://stackoverflow.com/questions/128618/file-size-format-provider
+        public static string FileSizeString(this ulong fileSize)
+        {
+            long j = 0;
+
+            while (fileSize > 1024 && j < 4)
+            {
+                fileSize = fileSize / 1024;
+                j++;
+            }
+            return (fileSize + Common.StringConstants.Delimiters.Space + suffix[j]);
         }
     }
 }
