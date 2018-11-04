@@ -47,6 +47,12 @@ namespace AB.Extensions
                         .Replace("\n", replacement);
         }
 
+        /// <summary>
+        /// A shorthand function for null checking, handy for some lambda operations.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static bool IsNull<T>(this T obj) where T : class
         {
             return obj == null;
