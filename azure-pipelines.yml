@@ -129,7 +129,7 @@ steps:
     command: 'push'
     nuGetFeedType: external
     publishFeedCredentials: 'Nuget'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/AB.Extensions.??.??.??.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/AB.Extensions.?.?.?.nupkg'
     verbosityPush: 'detailed'
 
 # Pre-requisite task(s) above for dotnet publish CLI
