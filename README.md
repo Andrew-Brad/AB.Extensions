@@ -1,7 +1,7 @@
 # AB.Extensions
-This is an extensions library I've built up over time, free of external dependencies, with constantly increasing test coverage and benchmarks.  Constant strings, simple enums, and missing LINQ methods all included.  
+This is an extensions library I've built up over time, free of external dependencies, with constantly increasing test coverage and benchmarks.  Constant strings, simple enums, and missing LINQ methods are all part of this library.
 
-The source now lives in Azure DevOps, but is always pushed to Github via Continuous Integration in Azure.
+The source now officially lives in Azure DevOps, but is continuously pushed to Github via Azure Pipelines CI.
 
 
 
@@ -16,7 +16,7 @@ __CI Sync to Github__
 
 Import easily by editing your Csproj:
 
-``<PackageReference Include="AB.Extensions" Version="2.1.0" />``
+``<PackageReference Include="AB.Extensions" Version="3.0.0" />``
 
 Alternatively with dotnet CLI:
 
@@ -24,12 +24,12 @@ Alternatively with dotnet CLI:
 
 
 ## CI Packaging
-The VSTS feed which hosts the packages uploaded by CI is publically available at: https://zep519.pkgs.visualstudio.com/_packaging/Ab.Extensions-CI/nuget/v3/index.json
+The Azure Artifacts feed which hosts the prerelease packages (uploaded by CI) is publically available at: https://zep519.pkgs.visualstudio.com/_packaging/Ab.Extensions-CI/nuget/v3/index.json
 
-Release packages are uploaded to Nuget.org under the following conditions:
+Release versions are automatically uploaded to Nuget.org by CI under the following conditions:
 - master branch
-- manual trigger of build
 - all previous steps succeeded in the build
-- when manually queuing the build, a variable of name ```PushReleaseNuget``` is provided with value ```confirm```
+- manual queue of build
+- when manually queuing the build, a variable of name ```PushReleaseNuget``` should be provided with value ```confirm```
 
-This means that when making code modifications, I need to respect the rules of SemVer in the csproj metadata.
+This means that when making new branches for code modifications, it's a good practice to immediately identify the desired SemVer in the csproj metadata, and ensure the code change adheres accordingly.
