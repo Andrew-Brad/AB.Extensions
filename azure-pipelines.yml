@@ -1,10 +1,9 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 # File matching patterns reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=vsts
 # Task catalog reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/index?view=vsts
 # The dotnet CLI Task full doc with arguments: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=vsts
+# Predefined build variables: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=vsts
 
 pool:
   vmImage: 'VS2017-Win2016'
@@ -34,7 +33,9 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: '**/*.csproj'    
+    projects: '**/*.csproj'
+    feedsToUse: config
+    nugetConfigPath: 'Nuget.config'
     verbosityRestore: 'normal' # Options: -, quiet, minimal, normal, detailed, diagnostic
     #arguments: '--configuration $(buildConfiguration)'    
 
@@ -95,7 +96,7 @@ steps:
   displayName: 'Push prerelease NUKPG to VSTS Nuget Feed'
   inputs:
     command: 'push'
-    nuGetFeedType: internal
+    nuGetFeedType: internal # currently shows a warning due to an auto-generated Nuget.config (not being linked here)
     publishVstsFeed: 'Ab.Extensions-CI'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/AB.Extensions.*.*.*-*.nupkg'
     verbosityPush: 'normal'
@@ -108,7 +109,7 @@ steps:
   inputs:
     command: 'pack'
     configuration: '$(buildConfiguration)'
-    packagesToPack: './src/AB.Extensions/AB.Extensions.csproj' # Required when command == pack
+    packagesToPack: './src/AB.Extensions/AB.Extetastynsions.csproj' # Required when command == pack
     packDirectory: '$(Build.ArtifactStagingDirectory)' # Optional
     nobuild: true # Optional - logs will echo a Build, when in fact the CLI assumes that the binaries are present, and will fail if they are not
     versioningScheme: 'off' # Options: off, byPrereleaseNumber, byEnvVar, byBuildNumber

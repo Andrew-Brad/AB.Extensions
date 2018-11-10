@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AB.Extensions\AB.Extensions.csproj" />
+    <PackageReference Include="AB.Extensions" Version="*" />
   </ItemGroup>
 
 </Project>
