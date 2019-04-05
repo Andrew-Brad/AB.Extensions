@@ -1,4 +1,3 @@
-# Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 # File matching patterns reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=vsts
 # Task catalog reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/index?view=vsts
@@ -6,46 +5,34 @@
 # Predefined build variables: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=vsts
 
 pool:
-  vmImage: 'VS2017-Win2016'
+  vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
 
 # Build number formats: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/options?view=vsts&tabs=yaml
 name: $(date:yyyyMMdd)$(rev:.r)
 
 variables:
-  buildConfiguration: 'Release'
-  artifactName: 'drop' # default value
+  buildConfiguration: Release
+  artifactName: drop # default value
+  packagesRestoreDirectory: $(Build.ArtifactStagingDirectory)/package_restore
+  binariesBuildDirectory: $(Build.BinariesDirectory)
   #major: '0'
   #minor: '0'
   #patch: $[counter('versioncounter')]
 
 steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    packageType: 'sdk'
+    version: '2.2.104' 
+
 - script: echo '$(Build.BuildNumber) with output path $(OutputPath)'
   displayName: 'Echo build number'
 
-# - task: PowerShell@1
-#   displayName: ListVariables.ps1
-#   inputs:
-#     scriptType: filePath
-#     scriptName: "$(repo.BuildScripts)/ListVariables.ps1"
-#     arguments: ''
+- script: dotnet restore --configfile Nuget.config --packages $(packagesRestoreDirectory)
+  displayName: Dotnet Restore 
 
-- task: DotNetCoreCLI@2
-  displayName: Restore
-  inputs:
-    command: restore
-    projects: '**/*.csproj'
-    feedsToUse: config
-    nugetConfigPath: 'Nuget.config'
-    verbosityRestore: 'normal' # Options: -, quiet, minimal, normal, detailed, diagnostic
-    #arguments: '--configuration $(buildConfiguration)'    
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build'
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
-    verbosityRestore: 'normal' # Options: -, quiet, minimal, normal, detailed, diagnostic
+- script: dotnet build --no-restore --output $(binariesBuildDirectory) --configuration $(buildConfiguration) --source $(packagesRestoreDirectory)
+  displayName: Dotnet Build
 
 # Execute Tests using CLI Task Runner
 - task: DotNetCoreCLI@2

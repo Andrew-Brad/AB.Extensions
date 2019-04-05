@@ -1,5 +1,5 @@
 # AB.Extensions
-This is an extensions library I've built up over time, free of external dependencies, with constantly increasing test coverage and benchmarks.  Constant strings, simple enums, and missing LINQ methods are all part of this library.
+This is an extensions library I've built up over time, free of external dependencies, with ever increasing test coverage and benchmarks.  Constant strings, simple enums, and missing LINQ methods are all part of this library.
 
 The source now officially lives in Azure DevOps, but is continuously pushed to Github via Azure Pipelines CI.
 
@@ -25,6 +25,8 @@ Alternatively with dotnet CLI:
 
 ## CI Packaging
 The Azure Artifacts feed which hosts the prerelease packages (uploaded by CI) is publically available at: https://zep519.pkgs.visualstudio.com/_packaging/Ab.Extensions-CI/nuget/v3/index.json
+
+If you prefer Myget, we're at: https://www.myget.org/F/andrew-ci/api/v3/index.json
 
 Release versions are automatically uploaded to Nuget.org by CI under the following conditions:
 - master branch
