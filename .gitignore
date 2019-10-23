@@ -248,3 +248,6 @@ ModelManifest.xml
 
 # VS Code
 .vscode
+
+# Local Nuget feed to test packages
+feed/*.nupkg
