@@ -20,19 +20,19 @@ namespace AB.Extensions.Tests
         }
 
         [Theory]
-        [InlineData(1,5)]
-        [InlineData(2,458)]
-        [InlineData(-10,10)]
+        [InlineData(1, 5)]
+        [InlineData(2, 458)]
+        [InlineData(-10, 10)]
         [InlineData(short.MinValue, short.MaxValue)]
         [InlineData(byte.MinValue, byte.MaxValue)]
         //[InlineData(0, 147483647)]
         //[InlineData(0, 2147483647)] // certain high int values throw OutOfMemoryExceptions (unrelated to logic)
-        public void Shuffle_Valid_List_Does_Shuffle(int startNumber,int totalNumbers)
+        public void Shuffle_Valid_List_Does_Shuffle(int startNumber, int totalNumbers)
         {
             //Arrange
-            IList<int> orderedNumbers = Enumerable.Range(startNumber,totalNumbers).ToList();
+            IList<int> orderedNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
             IList<int> shuffledNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
-            
+
             //Act
             shuffledNumbers.Shuffle();
 

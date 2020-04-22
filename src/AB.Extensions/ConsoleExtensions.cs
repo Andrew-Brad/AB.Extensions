@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using static AB.Extensions.Common.StringConstants;
 
 namespace AB.Extensions
@@ -43,7 +43,7 @@ namespace AB.Extensions
             Console.ForegroundColor = foreColor;
             Console.BackgroundColor = backColor;
         }
-        
+
         /// <summary>
         /// Clears the current line at the cursor.
         /// </summary>

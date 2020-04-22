@@ -63,7 +63,7 @@ namespace AB.Extensions
             return !obj.HasValue;
         }
 
-                
+
         // Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
@@ -101,7 +101,7 @@ namespace AB.Extensions
         public static Guid ToGuid(this string input, bool throwExceptionIfInvalid = false)
         {
             Guid outGuid = Guid.Empty;
-            if (Guid.TryParse(input,out outGuid) == true)
+            if (Guid.TryParse(input, out outGuid) == true)
             {
                 return outGuid;
             }

@@ -29,7 +29,7 @@
         /// <summary>
         /// Default empty constructor.
         /// </summary>
-        public PagingResponse() {}
+        public PagingResponse() { }
 
         /// <summary>
         /// Constructor with all parameters.
@@ -45,5 +45,5 @@
             ResultCount = resultCount;
             TotalCount = totalCount;
         }
-    }    
+    }
 }

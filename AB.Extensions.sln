@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4881113-F243-45DA-95C0-E12B385E258B}"
 EndProject
@@ -13,7 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AB.Extensions.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreConsoleApp20", "test\CoreConsoleApp20\CoreConsoleApp20.csproj", "{1898F3CB-D0FB-43D7-AEF1-5617E10C82B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AB.Benchmarks.ConsoleApp", "test\BenchmarkingConsoleApp\AB.Benchmarks.Console\AB.Benchmarks.ConsoleApp.csproj", "{45930CD2-4B76-4FE5-823D-09AF5380FB23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AB.Benchmarks.ConsoleApp", "test\BenchmarkingConsoleApp\AB.Benchmarks.Console\AB.Benchmarks.ConsoleApp.csproj", "{45930CD2-4B76-4FE5-823D-09AF5380FB23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DBB5E8F3-531E-4399-BED8-9431F2760B15}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

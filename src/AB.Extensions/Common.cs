@@ -76,7 +76,7 @@ namespace AB.Extensions
             public static class HTTP
             {
                 public static class Headers
-                {                    
+                {
                     ///<summary>Content-Types that are acceptable</summary>
                     public const string Accept = "Accept";
                     ///<summary>Character sets that are acceptable</summary>

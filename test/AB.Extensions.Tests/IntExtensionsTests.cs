@@ -10,7 +10,7 @@ namespace AB.Extensions.Tests
         [InlineData(-10, 1)]
         [InlineData(int.MaxValue, 2)]
         [InlineData(-1, 1)]
-        [InlineData(0,0)]
+        [InlineData(0, 0)]
         [InlineData(int.MinValue, 2)]
         [InlineData(1000000000, 1)]
         public void Int_Get_First_Digit(int givenNumber, int expectedFirstDigit)

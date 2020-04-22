@@ -210,12 +210,12 @@ namespace AB.Extensions
                 get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
             }
         }
-        
+
         //public static void NaiveNonRandomShuffle<T>(this IList<T> list)
         //{
         //    list.OrderBy(a => Guid.NewGuid());
         //}               
-        
+
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)

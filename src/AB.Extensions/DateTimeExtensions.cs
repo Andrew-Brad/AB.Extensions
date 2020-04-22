@@ -8,6 +8,14 @@ namespace AB.Extensions
         public static readonly DateTime SQL_SMALLDATE_MAX = new DateTime(2079, 06, 06, 23, 59, 00);
         public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0);
 
+        /// <summary>
+        /// Identical dates are considered between each other (inclusivity).
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="compareTime"></param>
+        /// <returns></returns>
         public static bool IsBetween(this DateTime dt, DateTime startDate, DateTime endDate, bool compareTime = false)
         {
             return compareTime ?

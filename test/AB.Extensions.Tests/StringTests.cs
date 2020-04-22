@@ -66,7 +66,7 @@ namespace ABExtensions.Tests
 
             //Assert
             Assert.Equal(Guid.Empty, result);
-        }        
+        }
 
         [Fact]
         public void String_To_Enum_Type_Of()
@@ -88,7 +88,7 @@ namespace ABExtensions.Tests
             //Act
 
             //Assert
-            Assert.Throws<ArgumentException>( () => input.ToEnumTypeOf<OrderByDirection>());
+            Assert.Throws<ArgumentException>(() => input.ToEnumTypeOf<OrderByDirection>());
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace ABExtensions.Tests
 
         //https://catalystsecure.com/blog/2011/05/how-many-bytes-in-a-gigabyte-my-answer-might-surprise-you/
         [Theory]
-        [InlineData(128,"128 bytes")]
+        [InlineData(128, "128 bytes")]
         [InlineData(17179869184, "16 GB")]
         [InlineData(4194304, "4 MB")]
         [InlineData(46080, "45 KB")]
@@ -147,7 +147,7 @@ namespace ABExtensions.Tests
         }
 
         [Theory]
-        [InlineData(@"1,2,3,4,5,6,7,8,9,10",10)]
+        [InlineData(@"1,2,3,4,5,6,7,8,9,10", 10)]
         [InlineData(@"111,222,""33,44,55"",666,""77,88"",""99""", 6)]
         [InlineData(null, 0)]
         [InlineData("", 0)]
@@ -155,7 +155,7 @@ namespace ABExtensions.Tests
         {
             // Act
             IEnumerable<string> split = input.SplitQuotedCsv();
-            
+
             // Assert
             Assert.Equal(expectedCount, split.Count());
         }

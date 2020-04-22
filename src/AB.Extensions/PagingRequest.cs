@@ -12,7 +12,7 @@
         /// <summary>
         /// Default empty constructor.
         /// </summary>
-        public PagingRequest() {}
+        public PagingRequest() { }
 
         public PagingRequest(uint pageNumber, uint resultPerPage)
         {
