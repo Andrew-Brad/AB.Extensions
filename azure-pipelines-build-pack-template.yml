@@ -14,14 +14,21 @@ steps:
 - script: dotnet build ./src/${{ parameters.libraryProject }}/${{ parameters.libraryProject }}.csproj --configuration ${{ parameters.buildConfiguration }} --no-restore
   displayName: dotnet build ${{ parameters.libraryProject }}
 
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
+  inputs:
+    packageType: sdk
+    version: 3.1.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
 # Task runner gives us fancy metrics in Azure DevOps
 - task: DotNetCoreCLI@2
   displayName: 'Run Unit Tests'
   inputs:
     command: test
     projects: './test/${{ parameters.libraryProject }}.Tests/${{ parameters.libraryProject }}.Tests.csproj'
-    arguments: '--configuration $(buildConfiguration)' # --logger trx added by the task
-    publishTestResults: true # Optional
+    arguments: '--configuration Debug' # --logger trx added by the task
+    publishTestResults: false # Optional
     nobuild: true # Optional - will cause the agent to set a --results-directory arg automagically    
 
 # dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages

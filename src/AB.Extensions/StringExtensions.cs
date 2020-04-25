@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AB.Extensions
 {
-    public static class Extensions
+    public static class StringExtensions
     {
         /// <summary>
         /// The Regex used in <see cref="SplitQuotedCsv"/>.
@@ -13,12 +12,28 @@ namespace AB.Extensions
         public static readonly Regex CsvSplitRegex = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
 
         /// <summary>
+        /// Carriage return line feed, for Windows OS. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
+        /// </summary>
+        public const string WindowsLineEnding = "\r\n";
+        /// <summary>
+        /// Carriage return, used on Mac OS. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
+        /// </summary>
+        public const string MacLineEnding = "\r";
+        /// <summary>
+        /// Line feed, used on Unix based systems. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
+        /// </summary>
+        public const string UnixLineEnding = "\n";
+        /// <summary>
+        /// String array containing the line endings for Windows, Mac, and Unix.
+        /// </summary>
+        public static readonly string[] AllOsLineEndings = new[] { WindowsLineEnding, MacLineEnding, UnixLineEnding };
+
+        /// <summary>
         /// Will do a normal string split by <see cref="Common.StringConstants.Delimiters.CommaChar"/>, but will respect quoted 
-        /// pieces of the strings and keep them together.
+        /// pieces of the strings and keep them together. Found @ https://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        //Attribution: https://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
         public static IEnumerable<string> SplitQuotedCsv(this string input)
         {
             if (input == null) yield break;
@@ -29,22 +44,28 @@ namespace AB.Extensions
             }
         }
 
-        public static IEnumerable<string> SplitStringByLineBreaks(this string str, bool removeEmptyLines = false)
+        /// <summary>
+        /// Perform a string.Split() operation, respecting all line break (NewLine) representations across Mac, Windows, and Unix.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="removeEmptyLines"></param>
+        /// <returns></returns>
+        public static string[] SplitStringByLineBreaks(this string str, bool removeEmptyLines = false)
         {
-            return str.Split(new[] { "\r\n", "\r", "\n" },
+            return str.Split(AllOsLineEndings,
                 removeEmptyLines ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
         }
 
         public static string RemoveLineBreaks(this string lines)
         {
-            return lines.Replace("\r", "").Replace("\n", "");
+            return lines.Replace(MacLineEnding, string.Empty).Replace(UnixLineEnding, string.Empty);
         }
 
         public static string ReplaceLineBreaks(this string lines, string replacement)
         {
-            return lines.Replace("\r\n", replacement)
-                        .Replace("\r", replacement)
-                        .Replace("\n", replacement);
+            return lines.Replace(WindowsLineEnding, replacement)
+                        .Replace(MacLineEnding, replacement)
+                        .Replace(UnixLineEnding, replacement);
         }
 
         /// <summary>

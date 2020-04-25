@@ -4,6 +4,7 @@ using System.Linq;
 using AB.Extensions;
 using static AB.Extensions.Common;
 using Xunit;
+using System.IO;
 
 namespace ABExtensions.Tests
 {
@@ -160,5 +161,82 @@ namespace ABExtensions.Tests
             Assert.Equal(expectedCount, split.Count());
         }
 
+        // git attributes auto crlf will trick you when viewing these files in an editor
+        [Theory]
+        [InlineData("windows_line_ending.txt", 2)]
+        [InlineData("unix_line_ending.txt", 2)]
+        //[InlineData("mac_line_ending.txt", 1)]
+        public void Cross_Platform_Line_Endings_Empty_Files_Produce_1_Line_Count(string fileName, int expectedCount)
+        {
+            // Arrange
+            string content = File.ReadAllText(fileName);
+
+            // Act
+            string[] split = content.SplitStringByLineBreaks();
+            int actualCount = split.Length;
+
+            // Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void Windows_Line_Endings_Produce_Correct_Line_Count()
+        {
+            // Arrange
+            string content = "line1" + StringExtensions.WindowsLineEnding + "line2" + StringExtensions.WindowsLineEnding + "line3";
+            int expectedCount = 3;
+
+            // Act
+            string[] split = content.SplitStringByLineBreaks();
+            int actualCount = split.Length;
+
+            // Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void Windows_Line_Endings_Produce_Correct_Line_Count_Removing_Empty()
+        {
+            // Arrange
+            string content = "line1" + StringExtensions.WindowsLineEnding + StringExtensions.WindowsLineEnding + StringExtensions.WindowsLineEnding + "line3" ;
+            int expectedCount = 2;
+
+            // Act
+            string[] split = content.SplitStringByLineBreaks(true);
+            int actualCount = split.Length;
+
+            // Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void Unix_Line_Endings_Produce_Correct_Line_Count()
+        {
+            // Arrange
+            string content = "line1" + StringExtensions.UnixLineEnding + "line2" + StringExtensions.UnixLineEnding + "line3";
+            int expectedCount = 3;
+
+            // Act
+            string[] split = content.SplitStringByLineBreaks();
+            int actualCount = split.Length;
+
+            // Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
+        public void Mac_Line_Endings_Produce_Correct_Line_Count()
+        {
+            // Arrange
+            string content = "line1" + StringExtensions.MacLineEnding + "line2" + StringExtensions.MacLineEnding+ "line3";
+            int expectedCount = 3;
+
+            // Act
+            string[] split = content.SplitStringByLineBreaks();
+            int actualCount = split.Length;
+
+            // Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
     }
 }

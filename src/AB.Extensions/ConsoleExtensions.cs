@@ -9,7 +9,7 @@ namespace AB.Extensions
     public class ConsoleExtensions
     {
         /// <summary>
-        /// /// A simple <see cref="Console.WriteLine"/> but with color arguments.
+        /// A simple <see cref="Console.WriteLine()"/> but with color arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="foregroundColor"></param>
@@ -27,7 +27,7 @@ namespace AB.Extensions
         }
 
         /// <summary>
-        /// A simple <see cref="Console.Write"/> but with color arguments.
+        /// A simple <see cref="Console.Write(bool)"/> but with color arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="foregroundColor"></param>

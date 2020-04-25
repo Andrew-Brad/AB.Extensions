@@ -1,6 +1,6 @@
 # AB.Extensions
 
-This is a C# extensions library that I maintain to help reduce errors in code that I find in the wild. It is free of dependencies, includes some benchmarks and helpful constant strings, simple enums, and LINQ helper methods. Some methods are pulled from StackOverflow, but with fixed corner cases and added test coverage. Others are just functions that I've found helpful or grown tired of re-googling and copy-pasting. Some useful static strings and dates are scattered throughout, for those who hate [magic strings](https://softwareengineering.stackexchange.com/questions/365339/what-is-wrong-with-magic-strings) like me.
+This is a C# extensions library that I maintain to help reduce errors in code that I find in the wild. It is free of dependencies, includes tests, benchmarks and light commentary on usage. Some methods are pulled from StackOverflow, but with fixed corner cases and added test coverage. Others are just functions that I've found helpful or grown tired of re-googling and copy-pasting. Some useful constant strings and dates are scattered throughout, for those who hate [magic strings](https://softwareengineering.stackexchange.com/questions/365339/what-is-wrong-with-magic-strings) like me.
 
 The source now officially lives in Azure DevOps, but is continuously pushed to Github via Azure Pipelines CI.
 
@@ -17,7 +17,7 @@ The source now officially lives in Azure DevOps, but is continuously pushed to G
 Import easily by editing your csproj:
 
 ```xml
-<PackageReference Include="AB.Extensions" Version="3.0.0" />
+<PackageReference Include="AB.Extensions" Version="4.0.0" />
 ```
 
 Alternatively with dotnet CLI:
@@ -45,7 +45,7 @@ This means that when making new branches for code modifications, it's a good pra
 
 A [dotnet local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use) is present in the repo which can help keep formatting & linting adherent to the .editorconfig file, even if you don't have dotnet format installed.
 
-```c#
+```shell
 dotnet tool restore;
 dotnet tool run dotnet-format;
 ```

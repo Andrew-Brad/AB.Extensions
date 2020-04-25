@@ -1,30 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Description>Dependency free extensions library.</Description>
-    <Authors>Andrew Brad</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>AB.Extensions</AssemblyName>
-    <PackageId>AB.Extensions</PackageId>
-    <PackageTags>extensions;andrew</PackageTags>
-    <PackageProjectUrl>https://github.com/Andrew-Brad/AB.Extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Andrew-Brad/AB.Extensions</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/Andrew-Brad/AB.Extensions/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <VersionPrefix>3.0.1</VersionPrefix>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
-    <PackageReleaseNotes>v3.0.0: Refactored some objects to make more sense, and added XML comments and test coverage.</PackageReleaseNotes>
-  </PropertyGroup>
+    <PropertyGroup>
+        <!--Update these 2 nodes when you are to pushing out new packages.-->
+        <VersionPrefix>4.0.0</VersionPrefix>
+        <PackageReleaseNotes>v4.0.0: Refactor line endings, add XML comments and change the StringExtensions namespace.</PackageReleaseNotes>
+        <!---->
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\AB.Extensions.xml</DocumentationFile>
-  </PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+        <Description>C# extensions.</Description>
+        <Authors>Andrew Brad</Authors>
+        <PackageId>AB.Extensions</PackageId>
+        <PackageTags>extensions;andrew;c#;helper;methods;string;datetime</PackageTags>
+        <PackageProjectUrl>https://github.com/Andrew-Brad/AB.Extensions</PackageProjectUrl>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseUrl>https://github.com/Andrew-Brad/AB.Extensions/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Andrew-Brad/AB.Extensions</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <AssemblyName>AB.Extensions</AssemblyName>
+        <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+        <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+        <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <NeutralLanguage>en</NeutralLanguage>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-  </ItemGroup>
+    <!-- Ignore compiler warnings -->
+    <PropertyGroup>
+        <NoWarn>
+            1701;
+            1702;
+            1591;
+            1573;
+            1570; <!-- Build bug that detects /script in a comment as an actual xml script tag -->
+        </NoWarn>
+    </PropertyGroup>
 
 </Project>
