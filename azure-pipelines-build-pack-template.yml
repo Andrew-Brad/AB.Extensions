@@ -91,3 +91,4 @@ steps:
     publishFeedCredentials: 'Nuget'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/${{ parameters.libraryProject }}.?.?.?.nupkg'
     verbosityPush: 'detailed'
+    allowPackageConflicts: true
