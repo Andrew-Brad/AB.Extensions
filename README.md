@@ -43,7 +43,7 @@ This means that when making new branches for code modifications, it's a good pra
 
 ## Apply Linting/Formatting
 
-A [dotnet local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use) is present in the repo which can help keep formatting & linting adherent to the .editorconfig file, even if you don't have dotnet format installed.
+A [dotnet local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use) is present in the repo which can help keep formatting & linting adherent to the .editorconfig file, even if you don't have [dotnet format](https://github.com/dotnet/format) installed.
 
 ```shell
 dotnet tool restore;

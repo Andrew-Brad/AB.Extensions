@@ -22,13 +22,13 @@ jobs:
     - template: azure-pipelines-build-pack-template.yml
       parameters:
         libraryProject: 'AB.Extensions'
-  - job: 'Mac_Build_Pack'
-    pool:
-      vmImage: 'macOS-latest'
-      steps:
-      - template: azure-pipelines-build-pack-template.yml
-        parameters:
-          libraryProject: 'AB.Extensions'
+  # - job: 'Mac_Build_Pack'
+  #   pool:
+  #     vmImage: 'macOS-latest'
+  #     steps:
+  #     - template: azure-pipelines-build-pack-template.yml
+  #       parameters:
+  #         libraryProject: 'AB.Extensions'
   - job: 'Win_Build_Pack'
     pool:
       vmImage: 'windows-2019'

@@ -1,0 +1,2 @@
+# Pack to local folder to inspect nupkg
+dotnet pack src/AB.Extensions/AB.Extensions.csproj -c Release --output feed/

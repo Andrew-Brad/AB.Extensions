@@ -250,4 +250,5 @@ ModelManifest.xml
 .vscode
 
 # Local Nuget feed to test packages
-feed/*.nupkg
+feed/**/**
+!feed/README.md
