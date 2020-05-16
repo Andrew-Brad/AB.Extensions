@@ -252,3 +252,4 @@ ModelManifest.xml
 # Local Nuget feed to test packages
 feed/**/**
 !feed/README.md
+BuildReportd
