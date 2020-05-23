@@ -25,6 +25,8 @@
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
         <NeutralLanguage>en</NeutralLanguage>
+        <!-- For code coverage, no impact to behavior here -->
+        <DebugType>full</DebugType>
     </PropertyGroup>
 
     <!-- Ignore compiler warnings -->
