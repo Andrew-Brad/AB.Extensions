@@ -1,1 +1,1 @@
-dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --collect:"XPlat Code Coverage" --results-directory BuildReports/UnitTests --settings ./test/AB.Extensions.Tests/coverlet.runsettings.xml
+dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj --collect:"XPlat Code Coverage" --results-directory .\test\AB.Extensions.Tests\bin\CodeCoverage --settings ./test/AB.Extensions.Tests/coverlet.runsettings.xml
