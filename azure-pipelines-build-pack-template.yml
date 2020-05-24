@@ -8,6 +8,9 @@ steps:
 - script: echo '$(Build.BuildNumber) with output path $(OutputPath)'
   displayName: '${{ parameters.libraryProject }} has build number $(Build.BuildNumber)'
 
+- script: dotnet tool restore
+  displayName: 'dotnet tool restore'
+
 - script: dotnet restore --configfile Nuget.config
   displayName: dotnet restore 
 
@@ -27,9 +30,12 @@ steps:
   inputs:
     command: test
     projects: './test/${{ parameters.libraryProject }}.Tests/${{ parameters.libraryProject }}.Tests.csproj'
-    arguments: '--configuration Debug' # --logger trx added by the task
+    arguments: '--configuration Debug --collect:"XPlat Code Coverage" --results-directory .\test\AB.Extensions.Tests\bin\CodeCoverage --settings ./test/AB.Extensions.Tests/coverlet.runsettings.xml' # --logger trx added by the task
     publishTestResults: false # Optional
     nobuild: true # Optional - will cause the agent to set a --results-directory arg automagically    
+
+- script: dotnet tool run codecov -f coverage.opencover.xml --slug "andrew-brad/AB.Extensions"
+  displayName: 'Upload to codecov.io'
 
 # dotnet pack reference: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core?view=vsts#pack-nuget-packages
 - task: DotNetCoreCLI@2

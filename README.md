@@ -12,6 +12,8 @@ The source now officially lives in Azure DevOps, but is continuously pushed to G
 
 [![CI Sync](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_apis/build/status/Sync%20to%20Github)](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_build/latest?definitionId=3)
 
+[![codecov](https://codecov.io/gh/Andrew-Brad/AB.Extensions/branch/master/graph/badge.svg)](https://codecov.io/gh/Andrew-Brad/AB.Extensions)
+
 ## Install the Package
 
 Import easily by editing your csproj:
