@@ -6,7 +6,15 @@
       "version": "3.3.111304",
       "commands": [
         "dotnet-format"
-      ]
+      ],
+      "rollForward": false
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.5.10",
+      "commands": [
+        "reportgenerator"
+      ],
+      "rollForward": false
     }
   }
 }

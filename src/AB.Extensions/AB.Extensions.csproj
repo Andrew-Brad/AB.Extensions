@@ -5,7 +5,7 @@
         <PackageReleaseNotes>v5.0.0: Broad modernization for 2026.</PackageReleaseNotes>
         <!---->
 
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0</TargetFrameworks>
         <VersionSuffix>$(VersionSuffix)</VersionSuffix>
         <Description>C# extensions.</Description>
         <Authors>Andrew Brad</Authors>

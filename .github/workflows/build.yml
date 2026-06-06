@@ -1,9 +1,13 @@
 name: CI
 
-# Trustworthy baseline CI: restore + build the whole solution, then run the test
-# suite, on both Linux and Windows in Debug and Release. The matrix gives a true
-# cross-platform / cross-config signal — tests reuse each cell's build output via
-# --no-build so we're testing exactly what we compiled.
+# Two complementary signals:
+#   * build-test : the SHIPPING gate. Builds and runs the suite in RELEASE (what
+#                  NuGet packs) across Linux + Windows. The test project multi-
+#                  targets net8/9/10, so `dotnet test` runs the suite once per
+#                  runtime automatically.
+#   * coverage   : runs in DEBUG (accurate line mapping) via scripts/coverage.ps1
+#                  — the SAME script developers run locally — enforces a coverage
+#                  floor and publishes an HTML report artifact.
 
 on:
   push:
@@ -13,38 +17,71 @@ on:
 
 # If you push again while a run is still going, cancel the stale one.
 concurrency:
-  group: build-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  # Every job needs all three runtimes to *run* the multi-targeted tests.
+  DOTNET_VERSIONS: |
+    8.0.x
+    9.0.x
+    10.0.x
+
 jobs:
-  build:
-    name: Build & Test (${{ matrix.os }} / ${{ matrix.configuration }})
+  build-test:
+    name: Build & Test (Release / ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false   # one cell failing shouldn't hide the others' results
+      fail-fast: false   # one OS failing shouldn't hide the other's result
       matrix:
         os: [ubuntu-latest, windows-latest]
-        configuration: [Debug, Release]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
+      - name: Setup .NET SDKs
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSIONS }}
 
       - name: Restore
         run: dotnet restore AB.Extensions.sln
 
-      - name: Build (${{ matrix.configuration }})
-        run: dotnet build AB.Extensions.sln --configuration ${{ matrix.configuration }} --no-restore
+      - name: Build (Release)
+        run: dotnet build AB.Extensions.sln --configuration Release --no-restore
 
-      - name: Test (${{ matrix.configuration }})
+      # Release == what ships. Reuses the build output via --no-build; runs the
+      # suite on net8.0, net9.0 and net10.0.
+      - name: Test (Release)
         run: >
           dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj
-          --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+          --configuration Release --no-build --verbosity normal
+
+  coverage:
+    name: Coverage (Debug)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSIONS }}
+
+      # Same script developers run locally — enforces the coverage floor and
+      # writes a markdown summary to the job summary.
+      - name: Collect coverage + enforce threshold
+        shell: pwsh
+        run: ./scripts/coverage.ps1 -Threshold 40
+
+      - name: Upload HTML coverage report
+        if: always()   # publish the report even when the threshold gate fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report/

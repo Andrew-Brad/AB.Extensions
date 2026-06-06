@@ -41,11 +41,53 @@ Release versions are automatically uploaded to Nuget.org by CI under the followi
 
 This means that when making new branches for code modifications, it's a good practice to immediately identify the desired SemVer in the csproj metadata, and ensure the code change adheres accordingly.
 
-## Apply Linting/Formatting
+## Required Local Tooling
 
-A [dotnet local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use) is present in the repo which can help keep formatting & linting adherent to the .editorconfig file, even if you don't have [dotnet format](https://github.com/dotnet/format) installed.
+This repo uses [dotnet local tools](https://docs.microsoft.com/en-us/dotnet/core/tools/local-tools-how-to-use), pinned in [`.config/dotnet-tools.json`](.config/dotnet-tools.json). Restore them once after cloning:
 
 ```shell
-dotnet tool restore;
-dotnet tool run dotnet-format;
+dotnet tool restore
+```
+
+| Tool | Purpose |
+|------|---------|
+| `dotnet-format` | Keeps formatting/linting adherent to `.editorconfig`. |
+| `dotnet-reportgenerator-globaltool` | Turns raw coverage data into an HTML report + summaries (used by the coverage script below). |
+
+To run an SDK that builds and tests the library, you need the **.NET 8, 9, and 10** runtimes installed (the test project multi-targets all three).
+
+## Build, Test & Coverage
+
+```shell
+# Build everything
+dotnet build AB.Extensions.sln -c Release
+
+# Run the suite (executes once per target framework: net8.0, net9.0, net10.0)
+dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj -c Release
+```
+
+### Code coverage
+
+Coverage is produced and validated by a single cross-platform script,
+[`scripts/coverage.ps1`](scripts/coverage.ps1) — the **exact same script CI runs**,
+so local results match the pipeline. It runs the tests in Debug (accurate line
+mapping), builds an HTML report, and fails if line coverage drops below a floor.
+
+```shell
+# Default: 40% floor, net10.0, prints a summary
+pwsh ./scripts/coverage.ps1
+
+# Raise the bar and open the HTML report in your browser
+pwsh ./scripts/coverage.ps1 -Threshold 45 -Open
+```
+
+The HTML report lands in `coverage-report/index.html` (git-ignored). The
+threshold is a **floor to ratchet upward** as coverage improves — raise it as
+tests are added; never lower it.
+
+## Apply Linting/Formatting
+
+```shell
+dotnet tool restore
+dotnet tool run dotnet-format
 ```
