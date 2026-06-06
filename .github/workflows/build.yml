@@ -21,12 +21,13 @@ permissions:
 
 jobs:
   build:
-    name: Build (${{ matrix.os }})
+    name: Build (${{ matrix.os }} / ${{ matrix.configuration }})
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false   # one OS failing shouldn't hide the other's result
+      fail-fast: false   # one cell failing shouldn't hide the others' results
       matrix:
         os: [ubuntu-latest, windows-latest]
+        configuration: [Debug, Release]
 
     steps:
       - name: Checkout
@@ -40,5 +41,5 @@ jobs:
       - name: Restore
         run: dotnet restore AB.Extensions.sln
 
-      - name: Build (Release)
-        run: dotnet build AB.Extensions.sln --configuration Release --no-restore
+      - name: Build (${{ matrix.configuration }})
+        run: dotnet build AB.Extensions.sln --configuration ${{ matrix.configuration }} --no-restore
