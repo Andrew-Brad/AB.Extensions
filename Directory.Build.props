@@ -1,0 +1,37 @@
+<Project>
+
+  <!-- Cross-cutting language & analysis settings shared by every project in the repo. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <!-- Authoring & package identity. Inert for IsPackable=false projects. -->
+  <PropertyGroup>
+    <Authors>Andrew Brad</Authors>
+    <Copyright>Copyright © Andrew Brad</Copyright>
+    <PackageProjectUrl>https://github.com/Andrew-Brad/AB.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Andrew-Brad/AB.Extensions</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <!-- Packaging quality: SourceLink, deterministic symbols, reproducible builds. -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- Set in CI only: -p:ContinuousIntegrationBuild=true -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Opt in to floating versions under CPM (off by default) so the sandbox
+         console below can consume the *newest* AB.Extensions available. -->
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+    <!-- The sandbox console dogfoods the package itself (not a ProjectReference),
+         floating to the newest build available across the mapped sources (see
+         Nuget.config): a locally-packed dev build from ./feed when you've run
+         scripts/pack-local.ps1, otherwise the latest published release from
+         nuget.org (4.0.0 today). '*-*' includes prerelease so a uniquely-suffixed
+         local pack (5.0.0-local.*) is always preferred and never cache-stale. -->
+    <PackageVersion Include="AB.Extensions" Version="*-*" />
+  </ItemGroup>
+
+</Project>
