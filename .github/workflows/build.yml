@@ -1,9 +1,9 @@
-name: Build
+name: CI
 
-# Trustworthy baseline CI: restore + build the whole solution on both Linux and
-# Windows. Testing is intentionally deferred to a follow-up workflow (see
-# docs/modernization-plan.md, Issue 7) so this stays a fast, reliable "does it
-# compile everywhere" signal.
+# Trustworthy baseline CI: restore + build the whole solution, then run the test
+# suite, on both Linux and Windows in Debug and Release. The matrix gives a true
+# cross-platform / cross-config signal — tests reuse each cell's build output via
+# --no-build so we're testing exactly what we compiled.
 
 on:
   push:
@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build:
-    name: Build (${{ matrix.os }} / ${{ matrix.configuration }})
+    name: Build & Test (${{ matrix.os }} / ${{ matrix.configuration }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false   # one cell failing shouldn't hide the others' results
@@ -43,3 +43,8 @@ jobs:
 
       - name: Build (${{ matrix.configuration }})
         run: dotnet build AB.Extensions.sln --configuration ${{ matrix.configuration }} --no-restore
+
+      - name: Test (${{ matrix.configuration }})
+        run: >
+          dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj
+          --configuration ${{ matrix.configuration }} --no-build --verbosity normal
