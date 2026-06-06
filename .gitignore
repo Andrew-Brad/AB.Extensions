@@ -99,6 +99,13 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
+# JetBrains Rider / IntelliJ IDE — user/machine-specific, volatile state.
+# Style is governed by .editorconfig (read natively by Rider), so nothing here
+# needs to be shared. Keep .DotSettings (team-shared ReSharper settings, no .user
+# suffix) out of this ignore intentionally.
+.idea/
+*.iml
+
 # JustCode is a .NET coding add-in
 .JustCode
 

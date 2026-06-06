@@ -16,7 +16,7 @@ namespace AB.Extensions.Tests
             //Act
             noNumbers.Shuffle();
             //Assert
-            Assert.Equal(0, noNumbers.Count);
+            Assert.Empty(noNumbers);
         }
 
         [Theory]
