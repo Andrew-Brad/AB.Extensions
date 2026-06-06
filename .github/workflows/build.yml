@@ -1,0 +1,44 @@
+name: Build
+
+# Trustworthy baseline CI: restore + build the whole solution on both Linux and
+# Windows. Testing is intentionally deferred to a follow-up workflow (see
+# docs/modernization-plan.md, Issue 7) so this stays a fast, reliable "does it
+# compile everywhere" signal.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:   # allow manual runs from the Actions tab
+
+# If you push again while a run is still going, cancel the stale one.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false   # one OS failing shouldn't hide the other's result
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore AB.Extensions.sln
+
+      - name: Build (Release)
+        run: dotnet build AB.Extensions.sln --configuration Release --no-restore
