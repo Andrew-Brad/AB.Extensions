@@ -16,10 +16,10 @@ namespace ABExtensions.Tests
         [InlineData("", "")]
         [InlineData(null, null)]
 
-        public void ReverseString_1(string input, string expected)
+        public void ReverseString_1(string? input, string? expected)
         {
             // Act
-            string reversed = input.ToReverseString();
+            string? reversed = input.ToReverseString();
 
             // Assert
             Assert.Equal(expected, reversed);
@@ -57,7 +57,7 @@ namespace ABExtensions.Tests
         [InlineData("~~~~~d2sdd650790-bc80-41a9-ae63-dd55e2240296")]
         [InlineData("")]
         [InlineData(null)]
-        public void ToGuid_Invalid_Cases(string input)
+        public void ToGuid_Invalid_Cases(string? input)
         {
             //Arrange
             Guid desiredOutput = Guid.Empty;
@@ -152,7 +152,7 @@ namespace ABExtensions.Tests
         [InlineData(@"111,222,""33,44,55"",666,""77,88"",""99""", 6)]
         [InlineData(null, 0)]
         [InlineData("", 0)]
-        public void SplitQuotedCsvString(string input, int expectedCount)
+        public void SplitQuotedCsvString(string? input, int expectedCount)
         {
             // Act
             IEnumerable<string> split = input.SplitQuotedCsv();
@@ -161,22 +161,29 @@ namespace ABExtensions.Tests
             Assert.Equal(expectedCount, split.Count());
         }
 
-        // git attributes auto crlf will trick you when viewing these files in an editor
+        // These on-disk fixtures are byte-pinned in .gitattributes (eol=lf / eol=crlf / -text),
+        // so the line ending each one claims survives the git round-trip on every platform —
+        // unlike the old `* text=auto` behavior, which normalized them all to LF and let the
+        // "Windows" case silently pass while testing Unix endings.
         [Theory]
-        [InlineData("windows_line_ending.txt", 2)]
-        [InlineData("unix_line_ending.txt", 2)]
-        //[InlineData("mac_line_ending.txt", 1)]
-        public void Cross_Platform_Line_Endings_Empty_Files_Produce_1_Line_Count(string fileName, int expectedCount)
+        [InlineData("windows_line_ending.txt", "\r\n")]
+        [InlineData("unix_line_ending.txt", "\n")]
+        [InlineData("mac_line_ending.txt", "\r")]
+        public void Cross_Platform_Line_Ending_Fixtures_Hold_Their_Bytes_And_Split_Into_Three_Lines(string fileName, string lineEnding)
         {
             // Arrange
             string content = File.ReadAllText(fileName);
 
+            // Assert the fixture genuinely holds the ending it claims — not a normalized substitute.
+            Assert.Contains(lineEnding, content);
+            if (lineEnding == StringExtensions.UnixLineEnding) Assert.DoesNotContain("\r", content);
+            if (lineEnding == StringExtensions.MacLineEnding) Assert.DoesNotContain("\n", content);
+
             // Act
             string[] split = content.SplitStringByLineBreaks();
-            int actualCount = split.Length;
 
-            // Assert
-            Assert.Equal(expectedCount, actualCount);
+            // Assert — content, not just count, so the three cases can't pass interchangeably.
+            Assert.Equal(new[] { "line1", "line2", "line3" }, split);
         }
 
         [Fact]

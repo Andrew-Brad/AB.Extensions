@@ -3,7 +3,6 @@ using BenchmarkDotNet.Attributes;
 
 namespace AB.Benchmarks.ConsoleApp
 {
-    [CoreJob]
     public class IntGetFirstDigitBenchmark
     {
         [Params(-1, 0, 1, 987654321, -10, int.MaxValue, 1000000000, int.MinValue, 000000)]

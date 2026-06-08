@@ -2,10 +2,17 @@
 
 namespace AB.Extensions
 {
+    /// <summary>
+    /// Extension methods and constants for working with <see cref="DateTime"/> — range checks,
+    /// weekday/weekend logic, workday arithmetic, and Unix time.
+    /// </summary>
     public static class DateTimeExtensions
     {
+        /// <summary>The minimum value representable by the SQL Server <c>smalldatetime</c> type (1900-01-01).</summary>
         public static readonly DateTime SQL_SMALLDATE_MIN = new DateTime(1900, 01, 01, 00, 00, 00);
+        /// <summary>The maximum value representable by the SQL Server <c>smalldatetime</c> type (2079-06-06 23:59).</summary>
         public static readonly DateTime SQL_SMALLDATE_MAX = new DateTime(2079, 06, 06, 23, 59, 00);
+        /// <summary>The Unix epoch, 1970-01-01 00:00:00 UTC.</summary>
         public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0);
 
         /// <summary>
@@ -23,6 +30,11 @@ namespace AB.Extensions
                dt.Date >= startDate.Date && dt.Date <= endDate.Date;
         }
 
+        /// <summary>
+        /// Returns true if the year of the given date is a leap year.
+        /// </summary>
+        /// <param name="value">The date whose year is tested.</param>
+        /// <returns>True when February of that year has 29 days.</returns>
         public static bool IsLeapYear(this DateTime value)
         {
             return (DateTime.DaysInMonth(value.Year, 2) == 29);
@@ -53,6 +65,12 @@ namespace AB.Extensions
             }
         }
 
+        /// <summary>
+        /// Adds the given number of workdays (Monday–Friday) to a date, skipping weekends.
+        /// </summary>
+        /// <param name="d">The starting date.</param>
+        /// <param name="days">The number of workdays to advance.</param>
+        /// <returns>The resulting date, landing on a weekday.</returns>
         public static DateTime AddWorkdays(this DateTime d, int days)
         {
             // start from a weekday

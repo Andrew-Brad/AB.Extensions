@@ -37,7 +37,7 @@ namespace AB.Extensions
         /// <param name="comparer">A comparer used to define the semantics of element comparison</param>
         /// <returns>An ordered copy of the source sequence</returns>
 
-        public static IOrderedEnumerable<T> OrderBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector, IComparer<TKey> comparer, OrderByDirection direction)
+        public static IOrderedEnumerable<T> OrderBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector, IComparer<TKey>? comparer, OrderByDirection direction)
         {
             return direction == OrderByDirection.Ascending
                        ? source.OrderBy(keySelector, comparer)
@@ -70,7 +70,7 @@ namespace AB.Extensions
         /// <param name="comparer">A comparer used to define the semantics of element comparison</param>
         /// <returns>An ordered copy of the source sequence</returns>
 
-        public static IOrderedEnumerable<T> ThenBy<T, TKey>(this IOrderedEnumerable<T> source, Func<T, TKey> keySelector, IComparer<TKey> comparer, OrderByDirection direction)
+        public static IOrderedEnumerable<T> ThenBy<T, TKey>(this IOrderedEnumerable<T> source, Func<T, TKey> keySelector, IComparer<TKey>? comparer, OrderByDirection direction)
         {
             return direction == OrderByDirection.Ascending
                        ? source.ThenBy(keySelector, comparer)
@@ -109,8 +109,8 @@ namespace AB.Extensions
 
         public static IEnumerable<TSource> SkipUntil<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             return SkipUntilImpl(source, predicate);
         }
 
@@ -163,8 +163,8 @@ namespace AB.Extensions
 
         public static IEnumerable<TSource> TakeUntil<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source == null) throw new ArgumentNullException("Source is null.");
-            if (predicate == null) throw new ArgumentNullException("Predicate is null.");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             return TakeUntilImpl(source, predicate);
         }
 
@@ -199,12 +199,19 @@ namespace AB.Extensions
             }
         }
 
+        /// <summary>
+        /// Provides a per-thread <see cref="Random"/> instance, avoiding the cross-thread
+        /// state corruption that results from sharing a single <see cref="Random"/>.
+        /// </summary>
         // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
         public static class ThreadSafeRandom
         {
             [ThreadStatic]
-            private static Random Local;
+            private static Random? Local;
 
+            /// <summary>
+            /// A <see cref="Random"/> instance unique to the calling thread.
+            /// </summary>
             public static Random ThisThreadsRandom
             {
                 get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
@@ -216,6 +223,12 @@ namespace AB.Extensions
         //    list.OrderBy(a => Guid.NewGuid());
         //}               
 
+        /// <summary>
+        /// Invokes an action for each element of a sequence.
+        /// </summary>
+        /// <typeparam name="T">The element type of the sequence.</typeparam>
+        /// <param name="source">The sequence to enumerate.</param>
+        /// <param name="action">The action to invoke for each element.</param>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)

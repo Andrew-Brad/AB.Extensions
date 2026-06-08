@@ -4,6 +4,16 @@
 * text=auto
 
 ###############################################################################
+# Line-ending test fixtures — pin exact bytes so `text=auto` can't normalize
+# the very endings these files exist to prove. eol=lf/crlf force the checkout
+# ending on every platform regardless of core.autocrlf; -text (binary) is the
+# only way a lone CR survives a round-trip (eol=cr is not a supported value).
+###############################################################################
+test/AB.Extensions.Tests/unix_line_ending.txt     text eol=lf
+test/AB.Extensions.Tests/windows_line_ending.txt  text eol=crlf
+test/AB.Extensions.Tests/mac_line_ending.txt       -text
+
+###############################################################################
 # Set default behavior for command prompt diff.
 #
 # This is need for earlier builds of msysgit that does not have it on by

@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace AB.Extensions
 {
+    /// <summary>
+    /// Shared enumerations and string constants used across the library (ordering directions,
+    /// equality filters, common delimiters, and HTTP header/MIME-type names).
+    /// </summary>
     public static class Common
     {
         /// <summary>
@@ -59,13 +63,21 @@ namespace AB.Extensions
             /// </summary>
             public static class Delimiters
             {
+                /// <summary>The comma character as a string, ",".</summary>
                 public const string Comma = ",";
+                /// <summary>The tilde character as a string, "~".</summary>
                 public const string Tilde = "~";
+                /// <summary>The pipe character as a string, "|".</summary>
                 public const string Pipe = "|";
+                /// <summary>A single space as a string, " ".</summary>
                 public const string Space = " ";
+                /// <summary>The comma character, ','.</summary>
                 public const char CommaChar = ',';
+                /// <summary>The tilde character, '~'.</summary>
                 public const char TildeChar = '~';
+                /// <summary>The pipe character, '|'.</summary>
                 public const char PipeChar = '|';
+                /// <summary>The space character, ' '.</summary>
                 public const char SpaceChar = ' ';
             }
 
@@ -75,6 +87,9 @@ namespace AB.Extensions
             /// Attribution: http://stackoverflow.com/questions/11037004/asp-mvc-are-there-any-constants-for-the-default-http-headers
             public static class HTTP
             {
+                /// <summary>
+                /// Constants for the standard HTTP request/response header names.
+                /// </summary>
                 public static class Headers
                 {
                     ///<summary>Content-Types that are acceptable</summary>
@@ -140,6 +155,9 @@ namespace AB.Extensions
                     ///<summary>A general warning about possible problems with the entity body.</summary>
                     public const string Warning = "Warning";
                 }
+                /// <summary>
+                /// A broad listing of MIME type constants from the HTTP spec, beyond the few the BCL exposes.
+                /// </summary>
                 public static class MimeTypes
                 {
                     // Grabbed from this SO link: http://stackoverflow.com/questions/10362140/asp-mvc-are-there-any-constants-for-the-default-content-types
@@ -189,7 +207,7 @@ namespace AB.Extensions
                     ///<summary>DTD files; Defined by RFC 3023</summary>
                     public const string ApplicationXmlDtd = "application/xml-dtd";
 
-                    ///<summary>ECMAScript/JavaScript; Defined in RFC 4329 (equivalent to application/ecmascript but with looser processing rules) It is not accepted in IE 8 or earlier - text/javascript is accepted but it is defined as obsolete in RFC 4329. The "type" attribute of the <script> tag in HTML5 is optional and in practice omitting the media type of JavaScript programs is the most interoperable solution since all browsers have always assumed the correct default even before HTML5.</summary>
+                    ///<summary>ECMAScript/JavaScript; Defined in RFC 4329 (equivalent to application/ecmascript but with looser processing rules) It is not accepted in IE 8 or earlier - text/javascript is accepted but it is defined as obsolete in RFC 4329. The "type" attribute of the &lt;script&gt; tag in HTML5 is optional and in practice omitting the media type of JavaScript programs is the most interoperable solution since all browsers have always assumed the correct default even before HTML5.</summary>
                     public const string ApplicationJavascript = "application/javascript";
 
                     ///<summary>ECMAScript/JavaScript; Defined in RFC 4329 (equivalent to application/javascript but with stricter processing rules)</summary>
@@ -243,7 +261,7 @@ namespace AB.Extensions
                     ///<summary>JavaScript Object Notation (JSON) Patch; Defined in RFC 6902</summary>
                     public const string ApplicationJsonPatch = "application/json-patch+json";
 
-                    ///<summary>JavaScript - Defined in and obsoleted by RFC 4329 in order to discourage its usage in favor of application/javascript. However,text/javascript is allowed in HTML 4 and 5 and, unlike application/javascript, has cross-browser support. The "type" attribute of the <script> tag in HTML5 is optional and there is no need to use it at all since all browsers have always assumed the correct default (even in HTML 4 where it was required by the specification).</summary>
+                    ///<summary>JavaScript - Defined in and obsoleted by RFC 4329 in order to discourage its usage in favor of application/javascript. However,text/javascript is allowed in HTML 4 and 5 and, unlike application/javascript, has cross-browser support. The "type" attribute of the &lt;script&gt; tag in HTML5 is optional and there is no need to use it at all since all browsers have always assumed the correct default (even in HTML 4 where it was required by the specification).</summary>
                     [Obsolete]
                     public const string TextJavascript = "text/javascript";
 

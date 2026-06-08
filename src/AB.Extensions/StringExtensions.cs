@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace AB.Extensions
 {
+    /// <summary>
+    /// Extension methods and constants for working with <see cref="string"/> — line endings,
+    /// CSV splitting, null checks, and small conversions.
+    /// </summary>
     public static class StringExtensions
     {
         /// <summary>
@@ -29,12 +33,12 @@ namespace AB.Extensions
         public static readonly string[] AllOsLineEndings = new[] { WindowsLineEnding, MacLineEnding, UnixLineEnding };
 
         /// <summary>
-        /// Will do a normal string split by <see cref="Common.StringConstants.Delimiters.CommaChar"/>, but will respect quoted 
+        /// Will do a normal string split by <see cref="Common.StringConstants.Delimiters.CommaChar"/>, but will respect quoted
         /// pieces of the strings and keep them together. Found @ https://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static IEnumerable<string> SplitQuotedCsv(this string input)
+        /// <param name="input">The (possibly null or empty) comma-separated string to split.</param>
+        /// <returns>The split fields, with quoted segments preserved; empty when <paramref name="input"/> is null or empty.</returns>
+        public static IEnumerable<string> SplitQuotedCsv(this string? input)
         {
             if (input == null) yield break;
             if (input.Length == 0) yield break;
@@ -47,20 +51,31 @@ namespace AB.Extensions
         /// <summary>
         /// Perform a string.Split() operation, respecting all line break (NewLine) representations across Mac, Windows, and Unix.
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="removeEmptyLines"></param>
-        /// <returns></returns>
+        /// <param name="str">The string to split.</param>
+        /// <param name="removeEmptyLines">When true, empty entries produced by consecutive line breaks are removed.</param>
+        /// <returns>The lines of <paramref name="str"/>, split on any OS line ending.</returns>
         public static string[] SplitStringByLineBreaks(this string str, bool removeEmptyLines = false)
         {
             return str.Split(AllOsLineEndings,
                 removeEmptyLines ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
         }
 
+        /// <summary>
+        /// Removes Mac (CR) and Unix (LF) line breaks from a string, leaving the remaining text concatenated.
+        /// </summary>
+        /// <param name="lines">The text to strip line breaks from.</param>
+        /// <returns>The text with CR and LF characters removed.</returns>
         public static string RemoveLineBreaks(this string lines)
         {
             return lines.Replace(MacLineEnding, string.Empty).Replace(UnixLineEnding, string.Empty);
         }
 
+        /// <summary>
+        /// Replaces every Windows (CRLF), Mac (CR) and Unix (LF) line break in a string with the given replacement.
+        /// </summary>
+        /// <param name="lines">The text to operate on.</param>
+        /// <param name="replacement">The string to substitute for each line break.</param>
+        /// <returns>The text with all line endings replaced by <paramref name="replacement"/>.</returns>
         public static string ReplaceLineBreaks(this string lines, string replacement)
         {
             return lines.Replace(WindowsLineEnding, replacement)
@@ -71,20 +86,34 @@ namespace AB.Extensions
         /// <summary>
         /// A shorthand function for null checking, handy for some lambda operations.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static bool IsNull<T>(this T obj) where T : class
+        /// <typeparam name="T">A reference type.</typeparam>
+        /// <param name="obj">The object to test.</param>
+        /// <returns>True if <paramref name="obj"/> is null.</returns>
+        public static bool IsNull<T>(this T? obj) where T : class
         {
             return obj == null;
         }
 
+        /// <summary>
+        /// A shorthand function for null checking a nullable value type, handy for some lambda operations.
+        /// </summary>
+        /// <typeparam name="T">A value type.</typeparam>
+        /// <param name="obj">The nullable value to test.</param>
+        /// <returns>True if <paramref name="obj"/> has no value.</returns>
         public static bool IsNull<T>(this T? obj) where T : struct
         {
             return !obj.HasValue;
         }
 
 
+        /// <summary>
+        /// Returns the distinct elements of a sequence according to a projected key.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by <paramref name="keySelector"/>.</typeparam>
+        /// <param name="source">The sequence to remove duplicates from.</param>
+        /// <param name="keySelector">A function projecting each element to the key compared for equality.</param>
+        /// <returns>A sequence containing the first element for each distinct key.</returns>
         // Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
@@ -102,9 +131,9 @@ namespace AB.Extensions
         /// <summary>
         /// Reverse a string of characters, echoing null and empties.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static string ToReverseString(this string input)
+        /// <param name="input">The string to reverse.</param>
+        /// <returns>The reversed string, or <paramref name="input"/> unchanged when it is null or empty.</returns>
+        public static string? ToReverseString(this string? input)
         {
             if (input == null) return null;
             if (input.Length == 0) return input;
@@ -116,10 +145,10 @@ namespace AB.Extensions
         /// <summary>
         /// One liner for converting strings to Guids. Null safe.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="throwExceptionIfInvalid"></param>
-        /// <returns></returns>
-        public static Guid ToGuid(this string input, bool throwExceptionIfInvalid = false)
+        /// <param name="input">The candidate Guid string.</param>
+        /// <param name="throwExceptionIfInvalid">When true, throws <see cref="FormatException"/> instead of returning <see cref="Guid.Empty"/> for invalid input.</param>
+        /// <returns>The parsed <see cref="Guid"/>, or <see cref="Guid.Empty"/> when invalid and not throwing.</returns>
+        public static Guid ToGuid(this string? input, bool throwExceptionIfInvalid = false)
         {
             Guid outGuid = Guid.Empty;
             if (Guid.TryParse(input, out outGuid) == true)
@@ -133,17 +162,29 @@ namespace AB.Extensions
             }
         }
 
+        /// <summary>
+        /// Parses a string into the named member of an enum, ignoring case.
+        /// </summary>
+        /// <typeparam name="T">The enum type to parse into.</typeparam>
+        /// <param name="stringValue">The case-insensitive enum member name.</param>
+        /// <returns>The matching enum value.</returns>
         public static T ToEnumTypeOf<T>(this string stringValue)
         {
             return (T)Enum.Parse(typeof(T), stringValue, true);
         }
 
-        public static int CountOccurrencesOf(this string text, string occurrenceString)
+        /// <summary>
+        /// Counts the non-overlapping occurrences of a substring within a string.
+        /// </summary>
+        /// <param name="text">The text to search; null or empty yields zero.</param>
+        /// <param name="occurrenceString">The substring to count.</param>
+        /// <returns>The number of times <paramref name="occurrenceString"/> appears in <paramref name="text"/>.</returns>
+        public static int CountOccurrencesOf(this string? text, string occurrenceString)
         {
             if (string.IsNullOrEmpty(text)) return 0;
             int count = 0;
             int i = 0;
-            while ((i = text.IndexOf(occurrenceString, i)) != -1)
+            while ((i = text!.IndexOf(occurrenceString, i)) != -1)
             {
                 i += occurrenceString.Length;
                 count++;
