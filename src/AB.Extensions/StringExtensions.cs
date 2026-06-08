@@ -107,28 +107,6 @@ namespace AB.Extensions
 
 
         /// <summary>
-        /// Returns the distinct elements of a sequence according to a projected key.
-        /// </summary>
-        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
-        /// <typeparam name="TKey">The type of the key returned by <paramref name="keySelector"/>.</typeparam>
-        /// <param name="source">The sequence to remove duplicates from.</param>
-        /// <param name="keySelector">A function projecting each element to the key compared for equality.</param>
-        /// <returns>A sequence containing the first element for each distinct key.</returns>
-        // Source: http://stackoverflow.com/questions/489258/linq-distinct-on-a-particular-property
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
-        (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            HashSet<TKey> seenKeys = new HashSet<TKey>();
-            foreach (TSource element in source)
-            {
-                if (seenKeys.Add(keySelector(element)))
-                {
-                    yield return element;
-                }
-            }
-        }
-
-        /// <summary>
         /// Reverse a string of characters, echoing null and empties.
         /// </summary>
         /// <param name="input">The string to reverse.</param>

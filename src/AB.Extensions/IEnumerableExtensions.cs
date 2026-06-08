@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+#if NETSTANDARD2_0
+using System.Threading; // ThreadSafeRandom only; modern TFMs use Random.Shared
+#endif
 using static AB.Extensions.Common;
 
 namespace AB.Extensions
@@ -188,22 +190,28 @@ namespace AB.Extensions
         // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
         public static void Shuffle<T>(this IList<T> list)
         {
+#if NETSTANDARD2_0
+            Random rng = ThreadSafeRandom.ThisThreadsRandom;
+#else
+            Random rng = Random.Shared; // thread-safe since .NET 6
+#endif
             int n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+                int k = rng.Next(n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }
         }
 
+#if NETSTANDARD2_0
         /// <summary>
         /// Provides a per-thread <see cref="Random"/> instance, avoiding the cross-thread
         /// state corruption that results from sharing a single <see cref="Random"/>.
         /// </summary>
-        // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
+        // netstandard2.0 only: modern TFMs use the thread-safe Random.Shared.
         public static class ThreadSafeRandom
         {
             [ThreadStatic]
@@ -217,6 +225,7 @@ namespace AB.Extensions
                 get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
             }
         }
+#endif
 
         //public static void NaiveNonRandomShuffle<T>(this IList<T> list)
         //{
@@ -258,5 +267,28 @@ namespace AB.Extensions
                 return true;
             }
         }
+
+#if NETSTANDARD2_0
+        /// <summary>
+        /// Returns the distinct elements of a sequence according to a projected key.
+        /// </summary>
+        /// <typeparam name="TSource">The element type of <paramref name="source"/>.</typeparam>
+        /// <typeparam name="TKey">The key type projected by <paramref name="keySelector"/>.</typeparam>
+        /// <param name="source">The sequence to remove duplicates from.</param>
+        /// <param name="keySelector">Projects each element to the key compared for equality.</param>
+        /// <returns>A sequence containing the first element for each distinct key.</returns>
+        // netstandard2.0 only: net6+ ships Enumerable.DistinctBy.
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+#endif
     }
 }

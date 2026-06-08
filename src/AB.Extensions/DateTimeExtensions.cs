@@ -12,8 +12,6 @@ namespace AB.Extensions
         public static readonly DateTime SQL_SMALLDATE_MIN = new DateTime(1900, 01, 01, 00, 00, 00);
         /// <summary>The maximum value representable by the SQL Server <c>smalldatetime</c> type (2079-06-06 23:59).</summary>
         public static readonly DateTime SQL_SMALLDATE_MAX = new DateTime(2079, 06, 06, 23, 59, 00);
-        /// <summary>The Unix epoch, 1970-01-01 00:00:00 UTC.</summary>
-        public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0);
 
         /// <summary>
         /// Identical dates are considered between each other (inclusivity).
@@ -83,14 +81,7 @@ namespace AB.Extensions
             return d;
         }
 
-        /// <summary>
-        /// Converts a System.DateTime object to Unix timestamp
-        /// </summary>
-        /// <returns>The Unix timestamp</returns>
-        public static long ToUnixTimestamp(this DateTime date)
-        {
-            TimeSpan unixTimeSpan = date - UNIX_EPOCH;
-            return (long)unixTimeSpan.TotalSeconds;
-        }
+        // Removed in v5.0.0: ToUnixTimestamp → new DateTimeOffset(date).ToUnixTimeSeconds()
+        // (BCL, available on all targets, handles offset/UTC correctly).
     }
 }

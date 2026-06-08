@@ -1,45 +1,60 @@
 # AB.Extensions
 
-This is a C# extensions library that I maintain to help reduce errors in code that I find in the wild. It is free of dependencies, includes tests, benchmarks and light commentary on usage. Some methods are pulled from StackOverflow, but with fixed corner cases and added test coverage. Others are just functions that I've found helpful or grown tired of re-googling and copy-pasting. Some useful constant strings and dates are scattered throughout, for those who hate [magic strings](https://softwareengineering.stackexchange.com/questions/365339/what-is-wrong-with-magic-strings) like me.
+[![CI](https://github.com/Andrew-Brad/AB.Extensions/actions/workflows/build.yml/badge.svg)](https://github.com/Andrew-Brad/AB.Extensions/actions/workflows/build.yml)
+[![NuGet](https://img.shields.io/nuget/v/AB.Extensions.svg)](https://www.nuget.org/packages/AB.Extensions/)
+[![Downloads](https://img.shields.io/nuget/dt/AB.Extensions.svg)](https://www.nuget.org/packages/AB.Extensions/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 
-The source now officially lives in Azure DevOps, but is continuously pushed to Github via Azure Pipelines CI.
+A dependency-free collection of C# extension methods and handy
+constants. Some are sharpened versions of StackOverflow snippets; others are performance-tweaked beyond the normal versions you'd see.
 
-## Builds by Azure Pipelines
+Built and tested on GitHub Actions across Linux and Windows, multi-targeting
+**`netstandard2.0`** (for reach) through **`net8.0` / `net9.0` / `net10.0`**.
 
-[![Primary Build in Azure Pipelines](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_apis/build/status/AB.Extensions%20Github%20Project)](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_build?definitionId=2)
+## Install
 
-## CI Sync to Github
-
-[![CI Sync](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_apis/build/status/Sync%20to%20Github)](https://zep519.visualstudio.com/AB.Extensions%20Github%20Project/_build/latest?definitionId=3)
-
-## Install the Package
-
-Import easily by editing your csproj:
-
-```xml
-<PackageReference Include="AB.Extensions" Version="4.0.0" />
-```
-
-Alternatively with dotnet CLI:
-
-```c#
+```shell
 dotnet add package AB.Extensions
 ```
 
-## CI Packaging Notes
+Or add a `PackageReference` to your `.csproj` (see the NuGet badge above for the
+current version):
 
-The Azure Artifacts feed which hosts the prerelease packages (uploaded by CI) is publically available [here](https://zep519.pkgs.visualstudio.com/_packaging/Ab.Extensions-CI/nuget/v3/index.json).
+```xml
+<PackageReference Include="AB.Extensions" Version="5.0.0" />
+```
 
-If you prefer Myget, those are located [here](https://www.myget.org/F/andrew-ci/api/v3/index.json).
+## Usage
 
-Release versions are automatically uploaded to Nuget.org by CI under the following conditions:
+```csharp
+using AB.Extensions;
 
-- master branch
-- all previous steps succeeded in the build
-- manual queue of build
-- when manually queuing the build, a variable of name **PushReleaseNuget** should be provided with value **confirm**.
+// Reverse a string
+"weRdNab".ToReverseString();                 // "baNdRew"
 
-This means that when making new branches for code modifications, it's a good practice to immediately identify the desired SemVer in the csproj metadata, and ensure the code change adheres accordingly.
+// Parse a Guid forgivingly — invalid input returns Guid.Empty instead of throwing
+"d2650790-bc80-41a9-ae63-dd55e2240296".ToGuid();   // the parsed Guid
+"not-a-guid".ToGuid();                              // Guid.Empty
+
+// Count occurrences of a substring
+"lol".CountOccurrencesOf("l");               // 2
+
+// Human-readable file sizes
+17179869184UL.FileSizeString();              // "16 GB"
+46080UL.FileSizeString();                    // "45 KB"
+
+// Split CSV while respecting quoted commas (quotes are preserved on the field)
+@"111,222,""33,44,55"",666".SplitQuotedCsv();   // 111 | 222 | "33,44,55" | 666
+
+// Split on any OS line ending (\r\n, \n, or \r) in one call
+"line1\r\nline2\nline3".SplitStringByLineBreaks();   // ["line1", "line2", "line3"]
+
+// Parse a string straight into an enum
+"Ascending".ToEnumTypeOf<OrderByDirection>();        // OrderByDirection.Ascending
+
+// Add business days, skipping weekends
+DateTime.Today.AddWorkdays(5);
+```
 
 ## Required Local Tooling
 
@@ -112,3 +127,36 @@ for details.
 dotnet tool restore
 dotnet tool run dotnet-format
 ```
+
+## Continuous Integration
+
+CI runs on GitHub Actions (status badge at the top):
+
+- **[Build & Test](.github/workflows/build.yml)** — Release build and the full suite
+  on **Linux + Windows**, run once per target framework (`net8.0`, `net9.0`,
+  `net10.0`).
+- **[Coverage](.github/workflows/build.yml)** — the same
+  [`scripts/coverage.ps1`](scripts/coverage.ps1) developers run locally, enforcing
+  the line-coverage floor and publishing the HTML report as a build artifact.
+- **[Publish](.github/workflows/publish.yml)** — packs and pushes to NuGet.org
+  (package **and** symbols) when a version tag is pushed.
+
+### Cutting a release
+
+The **git tag is the source of truth** for the version — there's no manual csproj
+bump. Tag and push:
+
+```shell
+git tag v5.0.0
+git push origin v5.0.0
+```
+
+The publish workflow parses the version from the tag, builds + tests, packs with
+reproducible-build flags, pushes to NuGet.org, and opens a GitHub Release with
+auto-generated notes. It requires a repository secret **`NUGET_API_KEY`** (an
+api.nuget.org push key). Publishing is also available manually from the Actions tab
+(`workflow_dispatch`).
+
+## License
+
+[MIT](LICENSE.txt) © Andrew Brad

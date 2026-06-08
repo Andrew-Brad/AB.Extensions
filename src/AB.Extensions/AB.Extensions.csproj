@@ -9,7 +9,7 @@
   <PropertyGroup>
     <!-- Bump VersionPrefix when publishing; release notes live in GitHub Releases. -->
     <VersionPrefix>5.0.0</VersionPrefix>
-    <PackageReleaseNotes>v5.0.0: Broad modernization for 2026.</PackageReleaseNotes>
+    <PackageReleaseNotes>v5.0.0: Broad modernization for 2026. Breaking: removed ToUnixTimestamp (use DateTimeOffset.ToUnixTimeSeconds); on net6+, DistinctBy and ThreadSafeRandom defer to the BCL (Enumerable.DistinctBy, Random.Shared) and are netstandard2.0-only.</PackageReleaseNotes>
     <PackageId>AB.Extensions</PackageId>
     <Title>AB.Extensions</Title>
     <Description>
