@@ -85,6 +85,27 @@ The HTML report lands in `coverage-report/index.html` (git-ignored). The
 threshold is a **floor to ratchet upward** as coverage improves — raise it as
 tests are added; never lower it.
 
+### Dogfood the package locally
+
+A `ProjectReference` proves the code compiles; it doesn't prove the *packaged*
+artifact works for a consumer (the per-TFM DLLs, XML docs, dependencies,
+license/readme, SourceLink). To close that gap, pack the library into the repo-local
+[`feed/`](feed/) NuGet source and consume it from the `CoreConsoleApp20` sandbox:
+
+```shell
+# Pack AB.Extensions into ./feed (unique prerelease version each run)
+pwsh ./scripts/pack-local.ps1
+
+# Consume the just-packed build and run the sandbox
+dotnet run --project test/CoreConsoleApp20
+```
+
+This works because [`Nuget.config`](Nuget.config) maps `AB.Extensions` to the local
+feed (with nuget.org as fallback) and [`Directory.Packages.props`](Directory.Packages.props)
+floats the sandbox's reference to the newest available build — your local pack when
+present, otherwise the latest release on nuget.org. See [`feed/README.md`](feed/README.md)
+for details.
+
 ## Apply Linting/Formatting
 
 ```shell

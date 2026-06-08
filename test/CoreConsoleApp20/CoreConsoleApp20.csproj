@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Deliberately a package reference, not a ProjectReference: this sandbox
+         dogfoods the published artifact. Version floats (Directory.Packages.props)
+         to the newest build available — a local pack from ./feed after running
+         scripts/pack-local.ps1, otherwise the latest release on nuget.org. -->
     <PackageReference Include="AB.Extensions" />
   </ItemGroup>
 
