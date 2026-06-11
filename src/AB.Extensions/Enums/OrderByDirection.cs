@@ -1,4 +1,4 @@
-﻿namespace AB.Extensions.Enums;
+﻿namespace AB.Extensions;
 
 /// <summary>
 /// Enumeration that defines values representing valid ordering directions for a sequence.

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AB.Extensions;
+﻿namespace AB.Extensions;
 
 /// <summary>
 /// Commonly used strings which are better organized as global constants instead of magic strings.

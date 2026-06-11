@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace AB.Benchmarks.ConsoleApp
+namespace AB.Benchmarks.ConsoleApp;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            var summary = BenchmarkRunner.Run<IntGetFirstDigitBenchmark>();
-        }
+        var summary = BenchmarkRunner.Run<IntGetFirstDigitBenchmark>();
     }
 }
