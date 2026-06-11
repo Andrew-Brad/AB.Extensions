@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BenchmarkDotNet.Attributes;
 
 namespace AB.Benchmarks.ConsoleApp

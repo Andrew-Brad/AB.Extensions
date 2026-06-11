@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using AB.Extensions.Enums;
+
 #if NETSTANDARD2_0
 using System.Threading; // ThreadSafeRandom only; modern TFMs use Random.Shared
 #endif
-using static AB.Extensions.Common;
 
 namespace AB.Extensions
 {

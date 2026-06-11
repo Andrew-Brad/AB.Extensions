@@ -1,5 +1,7 @@
 ﻿using System;
+
 using AB.Extensions;
+
 using Xunit;
 
 namespace ABExtensions.Tests

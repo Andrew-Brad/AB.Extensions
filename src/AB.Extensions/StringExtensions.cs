@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using static AB.Extensions.StringConstants;
+
 namespace AB.Extensions
 {
     /// <summary>
@@ -16,24 +18,7 @@ namespace AB.Extensions
         public static readonly Regex CsvSplitRegex = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
 
         /// <summary>
-        /// Carriage return line feed, for Windows OS. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
-        /// </summary>
-        public const string WindowsLineEnding = "\r\n";
-        /// <summary>
-        /// Carriage return, used on Mac OS. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
-        /// </summary>
-        public const string MacLineEnding = "\r";
-        /// <summary>
-        /// Line feed, used on Unix based systems. If you are concatenating line endings, use <see cref="Environment.NewLine"/>.
-        /// </summary>
-        public const string UnixLineEnding = "\n";
-        /// <summary>
-        /// String array containing the line endings for Windows, Mac, and Unix.
-        /// </summary>
-        public static readonly string[] AllOsLineEndings = new[] { WindowsLineEnding, MacLineEnding, UnixLineEnding };
-
-        /// <summary>
-        /// Will do a normal string split by <see cref="Common.StringConstants.Delimiters.CommaChar"/>, but will respect quoted
+        /// Will do a normal string split by <see cref="StringConstants.Delimiters.CommaChar"/>, but will respect quoted
         /// pieces of the strings and keep them together. Found @ https://stackoverflow.com/questions/3776458/split-a-comma-separated-string-with-both-quoted-and-unquoted-strings
         /// </summary>
         /// <param name="input">The (possibly null or empty) comma-separated string to split.</param>
@@ -44,7 +29,7 @@ namespace AB.Extensions
             if (input.Length == 0) yield break;
             foreach (Match match in CsvSplitRegex.Matches(input))
             {
-                yield return match.Value.TrimStart(Common.StringConstants.Delimiters.CommaChar);
+                yield return match.Value.TrimStart(StringConstants.Delimiters.CommaChar);
             }
         }
 
@@ -192,7 +177,7 @@ namespace AB.Extensions
                 fileSize = fileSize / 1024;
                 j++;
             }
-            return (fileSize + Common.StringConstants.Delimiters.Space + suffix[j]);
+            return (fileSize + StringConstants.Delimiters.Space + suffix[j]);
         }
     }
 }

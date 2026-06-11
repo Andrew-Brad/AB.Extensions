@@ -1,5 +1,6 @@
 ﻿using System;
-using static AB.Extensions.Common.StringConstants;
+
+using static AB.Extensions.StringConstants;
 
 namespace AB.Extensions
 {

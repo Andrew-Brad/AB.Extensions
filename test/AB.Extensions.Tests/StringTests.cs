@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using AB.Extensions;
-using static AB.Extensions.Common;
-using Xunit;
 using System.IO;
+using System.Linq;
+
+using AB.Extensions;
+using AB.Extensions.Enums;
+
+using Xunit;
 
 namespace ABExtensions.Tests
 {
@@ -176,8 +178,8 @@ namespace ABExtensions.Tests
 
             // Assert the fixture genuinely holds the ending it claims — not a normalized substitute.
             Assert.Contains(lineEnding, content);
-            if (lineEnding == StringExtensions.UnixLineEnding) Assert.DoesNotContain("\r", content);
-            if (lineEnding == StringExtensions.MacLineEnding) Assert.DoesNotContain("\n", content);
+            if (lineEnding == StringConstants.UnixLineEnding) Assert.DoesNotContain("\r", content);
+            if (lineEnding == StringConstants.MacLineEnding) Assert.DoesNotContain("\n", content);
 
             // Act
             string[] split = content.SplitStringByLineBreaks();
@@ -190,7 +192,7 @@ namespace ABExtensions.Tests
         public void Windows_Line_Endings_Produce_Correct_Line_Count()
         {
             // Arrange
-            string content = "line1" + StringExtensions.WindowsLineEnding + "line2" + StringExtensions.WindowsLineEnding + "line3";
+            string content = "line1" + StringConstants.WindowsLineEnding + "line2" + StringConstants.WindowsLineEnding + "line3";
             int expectedCount = 3;
 
             // Act
@@ -205,7 +207,7 @@ namespace ABExtensions.Tests
         public void Windows_Line_Endings_Produce_Correct_Line_Count_Removing_Empty()
         {
             // Arrange
-            string content = "line1" + StringExtensions.WindowsLineEnding + StringExtensions.WindowsLineEnding + StringExtensions.WindowsLineEnding + "line3" ;
+            string content = "line1" + StringConstants.WindowsLineEnding + StringConstants.WindowsLineEnding + StringConstants.WindowsLineEnding + "line3";
             int expectedCount = 2;
 
             // Act
@@ -220,7 +222,7 @@ namespace ABExtensions.Tests
         public void Unix_Line_Endings_Produce_Correct_Line_Count()
         {
             // Arrange
-            string content = "line1" + StringExtensions.UnixLineEnding + "line2" + StringExtensions.UnixLineEnding + "line3";
+            string content = "line1" + StringConstants.UnixLineEnding + "line2" + StringConstants.UnixLineEnding + "line3";
             int expectedCount = 3;
 
             // Act
@@ -235,7 +237,7 @@ namespace ABExtensions.Tests
         public void Mac_Line_Endings_Produce_Correct_Line_Count()
         {
             // Arrange
-            string content = "line1" + StringExtensions.MacLineEnding + "line2" + StringExtensions.MacLineEnding+ "line3";
+            string content = "line1" + StringConstants.MacLineEnding + "line2" + StringConstants.MacLineEnding + "line3";
             int expectedCount = 3;
 
             // Act
