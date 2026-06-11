@@ -64,15 +64,18 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// A shorthand function for null checking, handy for some lambda operations.
+    /// Reference-type null check, usable as a first-class predicate (e.g. a LINQ <c>Func&lt;T, bool&gt;</c>)
+    /// where the <c>is null</c> operator can't be passed — and as a runtime check independent of the
+    /// caller's nullable-reference-type context.
     /// </summary>
     /// <typeparam name="T">A reference type.</typeparam>
     /// <param name="obj">The object to test.</param>
     /// <returns>True if <paramref name="obj"/> is null.</returns>
-    public static bool IsNull<T>(this T? obj) where T : class => obj == null;
+    public static bool IsNull<T>(this T? obj) where T : class => obj is null;
 
     /// <summary>
-    /// A shorthand function for null checking a nullable value type, handy for some lambda operations.
+    /// Nullable value-type null check, usable as the same first-class predicate. Orthogonal to nullable
+    /// reference types — it tests <see cref="System.Nullable{T}.HasValue"/>.
     /// </summary>
     /// <typeparam name="T">A value type.</typeparam>
     /// <param name="obj">The nullable value to test.</param>
