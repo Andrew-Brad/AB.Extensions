@@ -7,9 +7,9 @@
 public static class DateTimeExtensions
 {
     /// <summary>The minimum value representable by the SQL Server <c>smalldatetime</c> type (1900-01-01).</summary>
-    public static readonly DateTime SQL_SMALLDATE_MIN = new DateTime(1900, 01, 01, 00, 00, 00);
+    public static readonly DateTime SQL_SMALLDATE_MIN = new(1900, 01, 01, 00, 00, 00);
     /// <summary>The maximum value representable by the SQL Server <c>smalldatetime</c> type (2079-06-06 23:59).</summary>
-    public static readonly DateTime SQL_SMALLDATE_MAX = new DateTime(2079, 06, 06, 23, 59, 00);
+    public static readonly DateTime SQL_SMALLDATE_MAX = new(2079, 06, 06, 23, 59, 00);
 
     /// <summary>
     /// Identical dates are considered between each other (inclusivity).
@@ -63,16 +63,13 @@ public static class DateTimeExtensions
     /// <returns>The resulting date, landing on a weekday.</returns>
     public static DateTime AddWorkdays(this DateTime d, int days)
     {
-        // start from a weekday
-        while (d.DayOfWeek.IsWeekday()) d = d.AddDays(1.0);
+        // normalize a weekend start forward to the next weekday
+        while (!d.DayOfWeek.IsWeekday()) d = d.AddDays(1.0);
         for (int i = 0; i < days; ++i)
         {
             d = d.AddDays(1.0);
-            while (d.DayOfWeek.IsWeekday()) d = d.AddDays(1.0);
+            while (!d.DayOfWeek.IsWeekday()) d = d.AddDays(1.0);
         }
         return d;
     }
-
-    // Removed in v5.0.0: ToUnixTimestamp → new DateTimeOffset(date).ToUnixTimeSeconds()
-    // (BCL, available on all targets, handles offset/UTC correctly).
 }
