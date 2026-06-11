@@ -9,7 +9,7 @@ A dependency-free collection of C# extension methods and handy
 constants. Some are sharpened versions of StackOverflow snippets; others are performance-tweaked beyond the normal versions you'd see.
 
 Built and tested on GitHub Actions across Linux and Windows, multi-targeting
-**`netstandard2.0`** (for reach) through **`net8.0` / `net9.0` / `net10.0`**.
+**`netstandard2.0`** (for Legacy compatibility) through **`net8.0` / `net9.0` / `net10.0`**.
 
 ## Install
 
@@ -73,8 +73,20 @@ To run an SDK that builds and tests the library, you need the **.NET 8, 9, and 1
 
 ## Build, Test & Coverage
 
+One command builds across every TFM and runs the suite, printing a compact summary
+(it's quiet on success and surfaces only the failing lines on error). Works in Git
+Bash on Windows as well as Linux/macOS:
+
 ```shell
-# Build everything
+scripts/build-test.sh            # Release (what ships)
+scripts/build-test.sh -c Debug   # Debug
+scripts/build-test.sh --verbose  # also stream raw dotnet output
+```
+
+Or run the steps directly:
+
+```shell
+# Build everything (all TFMs: netstandard2.0, net8.0, net9.0, net10.0)
 dotnet build AB.Extensions.sln -c Release
 
 # Run the suite (executes once per target framework: net8.0, net9.0, net10.0)
