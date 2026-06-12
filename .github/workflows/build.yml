@@ -48,6 +48,15 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSIONS }}
 
+      # The CoreConsoleApp20 sandbox consumes AB.Extensions as a floating package
+      # (dogfooding), not a project reference. Pack this branch's build into the
+      # local feed first so restore resolves it — otherwise the float falls back to
+      # the last *published* version and the sandbox can't see unpublished API
+      # (e.g. a renamed type). Mirrors the documented local dev loop.
+      - name: Pack to local feed (dogfood)
+        shell: pwsh
+        run: ./scripts/pack-local.ps1
+
       - name: Restore
         run: dotnet restore AB.Extensions.sln
 
