@@ -10,8 +10,11 @@ name: CI
 #                  floor and publishes an HTML report artifact.
 
 on:
+  # Open PRs are validated by the pull_request trigger; scoping push to the default
+  # branch avoids a duplicate run on every PR-branch push (push + pull_request both
+  # firing). push then covers post-merge validation of master.
   push:
-    branches: ['**']
+    branches: [master]
   pull_request:
   workflow_dispatch:   # allow manual runs from the Actions tab
 
