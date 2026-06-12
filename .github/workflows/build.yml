@@ -77,7 +77,7 @@ jobs:
       # writes a markdown summary to the job summary.
       - name: Collect coverage + enforce threshold
         shell: pwsh
-        run: ./scripts/coverage.ps1 -Threshold 40
+        run: ./scripts/coverage.ps1 -Threshold 90
 
       - name: Upload HTML coverage report
         if: always()   # publish the report even when the threshold gate fails

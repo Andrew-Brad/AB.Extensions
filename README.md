@@ -101,11 +101,11 @@ so local results match the pipeline. It runs the tests in Debug (accurate line
 mapping), builds an HTML report, and fails if line coverage drops below a floor.
 
 ```shell
-# Default: 40% floor, net10.0, prints a summary
+# Default: 90% floor, net10.0, prints a summary
 pwsh ./scripts/coverage.ps1
 
 # Raise the bar and open the HTML report in your browser
-pwsh ./scripts/coverage.ps1 -Threshold 45 -Open
+pwsh ./scripts/coverage.ps1 -Threshold 95 -Open
 ```
 
 The HTML report lands in `coverage-report/index.html` (git-ignored). The

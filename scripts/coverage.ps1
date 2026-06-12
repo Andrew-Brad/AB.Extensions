@@ -18,7 +18,7 @@
     `dotnet tool restore` once (the script does this for you).
 
 .PARAMETER Threshold
-    Minimum acceptable line-coverage percentage. Default: 40.
+    Minimum acceptable line-coverage percentage. Default: 90.
     This is a FLOOR to ratchet upward as coverage improves — raise it, never lower
     it, as tests are added.
 
@@ -32,15 +32,15 @@
 
 .EXAMPLE
     pwsh ./scripts/coverage.ps1
-    Run with defaults (40% floor, net10.0) and print the summary.
+    Run with defaults (90% floor, net10.0) and print the summary.
 
 .EXAMPLE
-    pwsh ./scripts/coverage.ps1 -Threshold 45 -Open
-    Enforce 45% and pop the HTML report open in a browser.
+    pwsh ./scripts/coverage.ps1 -Threshold 95 -Open
+    Enforce 95% and pop the HTML report open in a browser.
 #>
 [CmdletBinding()]
 param(
-    [double]$Threshold = 40,
+    [double]$Threshold = 90,
     [string]$Framework = 'net10.0',
     [switch]$Open
 )

@@ -1,11 +1,15 @@
-﻿using static AB.Extensions.StringConstants;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using static AB.Extensions.StringConstants;
 
 namespace AB.Extensions;
 
 /// <summary>
 /// A collection of handy methods to enable pretty printing to a console.
 /// </summary>
-public class ConsoleExtensions
+// Direct Console I/O (cursor/colors) — not unit-testable without abstracting System.Console; excluded from coverage.
+[ExcludeFromCodeCoverage]
+public static class ConsoleHelper
 {
     /// <summary>
     /// A simple <see cref="Console.WriteLine()"/> but with color arguments.

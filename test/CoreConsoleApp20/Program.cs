@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using AB.Extensions;
 
-using static AB.Extensions.ConsoleExtensions;
+using static AB.Extensions.ConsoleHelper;
 
 namespace CoreConsoleApp20;
 
