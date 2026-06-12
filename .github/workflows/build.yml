@@ -51,27 +51,25 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSIONS }}
 
-      # The CoreConsoleApp20 sandbox consumes AB.Extensions as a floating package
-      # (dogfooding), not a project reference. Pack this branch's build into the
-      # local feed first so restore resolves it — otherwise the float falls back to
-      # the last *published* version and the sandbox can't see unpublished API
-      # (e.g. a renamed type). Mirrors the documented local dev loop.
-      - name: Pack to local feed (dogfood)
-        shell: pwsh
-        run: ./scripts/pack-local.ps1
-
+      # CI gates the shippable projects: the library (all 4 TFMs) and its test suite.
+      # The console sandboxes (CoreConsoleApp20, AB.Benchmarks.ConsoleApp) are local
+      # dev/benchmark tools — they consume AB.Extensions as a floating package and are
+      # exercised locally (scripts/pack-local.ps1), so they're left out of the gate.
       - name: Restore
-        run: dotnet restore AB.Extensions.sln
+        run: |
+          dotnet restore src/AB.Extensions/AB.Extensions.csproj
+          dotnet restore test/AB.Extensions.Tests/AB.Extensions.Tests.csproj
 
-      - name: Build (Release)
-        run: dotnet build AB.Extensions.sln --configuration Release --no-restore
+      # Builds netstandard2.0 + net8/9/10 — the full shipping TFM matrix.
+      - name: Build library (Release)
+        run: dotnet build src/AB.Extensions/AB.Extensions.csproj --configuration Release --no-restore
 
-      # Release == what ships. Reuses the build output via --no-build; runs the
-      # suite on net8.0, net9.0 and net10.0.
+      # Release == what ships. Builds the test project (and the library via project
+      # reference) and runs the suite on net8.0, net9.0 and net10.0.
       - name: Test (Release)
         run: >
           dotnet test test/AB.Extensions.Tests/AB.Extensions.Tests.csproj
-          --configuration Release --no-build --verbosity normal
+          --configuration Release --no-restore --verbosity normal
 
   coverage:
     name: Coverage (Debug)
@@ -89,7 +87,7 @@ jobs:
       # writes a markdown summary to the job summary.
       - name: Collect coverage + enforce threshold
         shell: pwsh
-        run: ./scripts/coverage.ps1 -Threshold 90
+        run: ./scripts/coverage.ps1 -Threshold 90 -Quiet
 
       - name: Upload HTML coverage report
         if: always()   # publish the report even when the threshold gate fails

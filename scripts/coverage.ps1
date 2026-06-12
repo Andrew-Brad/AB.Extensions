@@ -30,6 +30,11 @@
     Open the generated HTML report in the default browser when finished (local
     convenience; ignored in CI).
 
+.PARAMETER Quiet
+    Strip ANSI colors and reduce tool chatter (dotnet test + ReportGenerator) so the
+    output is safe for terminals/log scrapers that choke on escape sequences, and
+    tidier in CI logs. The coverage summary and PASS/FAIL result still print.
+
 .EXAMPLE
     pwsh ./scripts/coverage.ps1
     Run with defaults (90% floor, net10.0) and print the summary.
@@ -42,10 +47,19 @@
 param(
     [double]$Threshold = 90,
     [string]$Framework = 'net10.0',
-    [switch]$Open
+    [switch]$Open,
+    [switch]$Quiet
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Quiet mode strips ANSI color + tool chatter so the output is safe for renderers/log
+# scrapers that mishandle escape sequences (and tidier in CI). Status text still prints.
+function Write-Status([string]$Message, [string]$Color = 'Cyan') {
+    if ($Quiet) { Write-Host $Message } else { Write-Host $Message -ForegroundColor $Color }
+}
+$testVerbosity   = if ($Quiet) { 'quiet' }   else { 'minimal' }
+$reportVerbosity = if ($Quiet) { 'Warning' } else { 'Info' }
 
 # Resolve paths relative to the repo root (this script lives in <root>/scripts).
 $repoRoot    = Resolve-Path (Join-Path $PSScriptRoot '..')
@@ -53,7 +67,7 @@ $testProject = Join-Path $repoRoot 'test/AB.Extensions.Tests/AB.Extensions.Tests
 $resultsDir  = Join-Path $repoRoot 'test/AB.Extensions.Tests/TestResults'
 $reportDir   = Join-Path $repoRoot 'coverage-report'
 
-Write-Host "==> Restoring local dotnet tools" -ForegroundColor Cyan
+Write-Status "==> Restoring local dotnet tools"
 dotnet tool restore
 
 # Clean prior results so we never report stale numbers.
@@ -61,23 +75,25 @@ foreach ($dir in @($resultsDir, $reportDir)) {
     if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
 }
 
-Write-Host "==> Running tests with coverage (Debug / $Framework)" -ForegroundColor Cyan
+Write-Status "==> Running tests with coverage (Debug / $Framework)"
 dotnet test $testProject `
     --configuration Debug `
     --framework $Framework `
     --collect:"XPlat Code Coverage" `
-    --results-directory $resultsDir
+    --results-directory $resultsDir `
+    --nologo --verbosity $testVerbosity
 if ($LASTEXITCODE -ne 0) { throw "Tests failed (exit $LASTEXITCODE)." }
 
 $cobertura = Get-ChildItem $resultsDir -Recurse -Filter 'coverage.cobertura.xml' |
     Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if (-not $cobertura) { throw "No coverage.cobertura.xml was produced." }
 
-Write-Host "==> Generating report" -ForegroundColor Cyan
+Write-Status "==> Generating report"
 dotnet tool run reportgenerator `
     "-reports:$($cobertura.FullName)" `
     "-targetdir:$reportDir" `
-    "-reporttypes:Html;TextSummary;MarkdownSummaryGithub"
+    "-reporttypes:Html;TextSummary;MarkdownSummaryGithub" `
+    "-verbosity:$reportVerbosity"
 if ($LASTEXITCODE -ne 0) { throw "ReportGenerator failed (exit $LASTEXITCODE)." }
 
 # Pull the authoritative line-coverage % straight from the cobertura root.
@@ -91,7 +107,7 @@ if ($env:GITHUB_STEP_SUMMARY) {
 }
 
 Write-Host ""
-Write-Host "Line coverage: $linePct%  (threshold: $Threshold%)" -ForegroundColor White
+Write-Status "Line coverage: $linePct%  (threshold: $Threshold%)" 'White'
 Write-Host "HTML report:   $(Join-Path $reportDir 'index.html')"
 
 if ($Open -and -not $env:GITHUB_ACTIONS) {
@@ -102,7 +118,7 @@ if ($Open -and -not $env:GITHUB_ACTIONS) {
 }
 
 if ($linePct -lt $Threshold) {
-    Write-Host "FAIL: line coverage $linePct% is below the $Threshold% threshold." -ForegroundColor Red
+    Write-Status "FAIL: line coverage $linePct% is below the $Threshold% threshold." 'Red'
     exit 1
 }
-Write-Host "PASS: line coverage meets the $Threshold% threshold." -ForegroundColor Green
+Write-Status "PASS: line coverage meets the $Threshold% threshold." 'Green'

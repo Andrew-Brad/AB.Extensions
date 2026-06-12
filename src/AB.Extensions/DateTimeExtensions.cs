@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Extension methods and constants for working with <see cref="DateTime"/> — range checks,
-/// weekday/weekend logic, workday arithmetic, and Unix time.
+/// weekday/weekend logic, and workday arithmetic.
 /// </summary>
 public static class DateTimeExtensions
 {

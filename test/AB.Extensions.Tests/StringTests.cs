@@ -129,6 +129,11 @@ public class StringTests
         Assert.Equal(expectedCount, actualCount);
     }
 
+    // Guards the infinite loop: an empty needle matches at every index without advancing.
+    [Fact]
+    public void CountOccurrences_empty_needle_on_nonempty_text_returns_0_without_hanging() =>
+        Assert.Equal(0, "abc".CountOccurrencesOf(""));
+
     //https://catalystsecure.com/blog/2011/05/how-many-bytes-in-a-gigabyte-my-answer-might-surprise-you/
     [Theory]
     [InlineData(128, "128 bytes")]
@@ -136,6 +141,7 @@ public class StringTests
     [InlineData(4194304, "4 MB")]
     [InlineData(46080, "45 KB")]
     [InlineData(0, "0 bytes")]
+    [InlineData(5497558138880, "5120 GB")] // 5 TB: caps at GB instead of indexing past `suffix`
     public void FormatFileSize(long byteCount, string expectedDisplayText)
     {
         // Arrange

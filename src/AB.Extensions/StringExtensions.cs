@@ -129,11 +129,12 @@ public static class StringExtensions
     /// Counts the non-overlapping occurrences of a substring within a string.
     /// </summary>
     /// <param name="text">The text to search; null or empty yields zero.</param>
-    /// <param name="occurrenceString">The substring to count.</param>
+    /// <param name="occurrenceString">The substring to count; null or empty yields zero.</param>
     /// <returns>The number of times <paramref name="occurrenceString"/> appears in <paramref name="text"/>.</returns>
     public static int CountOccurrencesOf(this string? text, string occurrenceString)
     {
-        if (string.IsNullOrEmpty(text)) return 0;
+        // Empty needle would make IndexOf match at every position without advancing — an infinite loop.
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(occurrenceString)) return 0;
         int count = 0;
         int i = 0;
         while ((i = text!.IndexOf(occurrenceString, i)) != -1)
@@ -161,7 +162,7 @@ public static class StringExtensions
     {
         long j = 0;
 
-        while (fileSize > 1024 && j < 4)
+        while (fileSize > 1024 && j < suffix.Length - 1)
         {
             fileSize = fileSize / 1024;
             j++;

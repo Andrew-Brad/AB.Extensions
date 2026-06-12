@@ -30,7 +30,7 @@ public static class ConsoleHelper
     }
 
     /// <summary>
-    /// A simple <see cref="Console.Write(bool)"/> but with color arguments.
+    /// A simple <see cref="Console.Write(string)"/> but with color arguments.
     /// </summary>
     /// <param name="message"></param>
     /// <param name="foregroundColor"></param>
