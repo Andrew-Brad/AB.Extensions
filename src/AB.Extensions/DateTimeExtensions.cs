@@ -55,6 +55,11 @@ public static class DateTimeExtensions
     /// <returns></returns>
     public static bool IsWeekend(this DayOfWeek d) => !d.IsWeekday();
 
+    // AddWorkdays is calendar-day arithmetic, so the modern surface uses DateOnly — no
+    // time-of-day, kind, or time zone to reason about. netstandard2.0 has no DateOnly, so
+    // that single legacy TFM falls back to the DateTime form. The bodies are identical; only
+    // the date type differs.
+#if NETSTANDARD2_0
     /// <summary>
     /// Adds the given number of workdays (Monday–Friday) to a date, skipping weekends.
     /// A negative <paramref name="days"/> walks backwards, subtracting workdays.
@@ -76,4 +81,27 @@ public static class DateTimeExtensions
         }
         return d;
     }
+#else
+    /// <summary>
+    /// Adds the given number of workdays (Monday–Friday) to a date, skipping weekends.
+    /// A negative <paramref name="days"/> walks backwards, subtracting workdays.
+    /// </summary>
+    /// <param name="d">The starting date.</param>
+    /// <param name="days">The number of workdays to advance; negative values move backwards.</param>
+    /// <returns>The resulting date, always landing on a weekday.</returns>
+    public static DateOnly AddWorkdays(this DateOnly d, int days)
+    {
+        // A weekend start is normalized onto a weekday in the direction of travel (forward when days == 0, preserving the historic behaviour).
+        int direction = Math.Sign(days);
+        int step = direction == 0 ? 1 : direction;
+
+        while (!d.DayOfWeek.IsWeekday()) d = d.AddDays(step);
+        for (int i = 0; i < Math.Abs(days); ++i)
+        {
+            d = d.AddDays(direction);
+            while (!d.DayOfWeek.IsWeekday()) d = d.AddDays(direction);
+        }
+        return d;
+    }
+#endif
 }

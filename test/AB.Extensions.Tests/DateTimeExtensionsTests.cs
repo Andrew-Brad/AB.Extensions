@@ -56,6 +56,8 @@ public class DateTimeExtensionsTests
     }
 
     // --- AddWorkdays: anchored on the week of Mon 2026-06-01 ... Sun 2026-06-07 ---
+    // Exercises the modern DateOnly overload (the only one visible to this net8+ test project;
+    // the netstandard2.0 DateTime overload shares the same body but is legacy-only).
     // Contract: a weekend start normalizes forward to Monday, then each workday step skips weekends.
 
     [Theory]
@@ -113,7 +115,7 @@ public class DateTimeExtensionsTests
     {
         foreach (int days in new[] { 1, 3, 5, 10 })
         {
-            DateTime forward = Date(start).AddWorkdays(days);
+            DateOnly forward = Date(start).AddWorkdays(days);
             Assert.Equal(Date(start), forward.AddWorkdays(-days));
         }
     }
@@ -130,10 +132,10 @@ public class DateTimeExtensionsTests
     {
         foreach (int days in new[] { -10, -5, -1, 0, 1, 3, 5, 10 })
         {
-            DateTime result = Date(start).AddWorkdays(days);
+            DateOnly result = Date(start).AddWorkdays(days);
             Assert.True(result.DayOfWeek.IsWeekday(), $"start {start} +{days} landed on {result.DayOfWeek} ({result:yyyy-MM-dd})");
         }
     }
 
-    private static DateTime Date(string iso) => DateTime.ParseExact(iso, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private static DateOnly Date(string iso) => DateOnly.ParseExact(iso, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 }

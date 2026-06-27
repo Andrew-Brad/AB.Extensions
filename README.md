@@ -52,8 +52,8 @@ using AB.Extensions;
 // Parse a string straight into an enum
 "Ascending".ToEnumTypeOf<OrderByDirection>();        // OrderByDirection.Ascending
 
-// Add business days, skipping weekends
-DateTime.Today.AddWorkdays(5);
+// Add business days, skipping weekends (negative subtracts)
+DateOnly.FromDateTime(DateTime.Today).AddWorkdays(5);   // netstandard2.0 takes a DateTime instead
 ```
 
 ## Required Local Tooling

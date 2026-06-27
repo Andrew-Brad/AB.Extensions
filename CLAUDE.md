@@ -15,10 +15,10 @@ this file.
 ## What this project is
 
 AB.Extensions is a dependency-free C# library of extension methods and constants,
-published to NuGet. It aims to set a high, current bar for .NET craftsmanship:
+published to NuGet. It aims to set a high, current bar for .NET library packaging best practices:
 modern targeting, a clean documented developer experience, zero-warning builds, and
 honest nullable annotations. When making changes, optimize for code that reads as
-idiomatic, current, senior-level .NET.
+idiomatic, current, expert-level .NET.
 
 ## Targeting
 
@@ -56,8 +56,6 @@ here. The rationale behind it:
 
 ## API surface & versioning
 
-- The library is at **v5.0.0**; breaking changes are acceptable on major bumps and
-  should be recorded in `PackageReleaseNotes`.
 - **Prefer the BCL over reinventing it.** Members the modern BCL covers have been
   removed or `#if NETSTANDARD2_0`-gated (e.g. `DistinctBy`, `Random.Shared` vs the old
   `ThreadSafeRandom`, `DateTimeOffset` over a hand-rolled Unix-timestamp helper). When
@@ -94,5 +92,4 @@ Remaining design/correctness cleanups (the tail of the modernization effort):
 
 - `ConsoleExtensions` isn't actually extension methods / not static — rename/reshape.
 - `FileSizeString` boundary (`>` vs `>=`) and precision review.
-- `LeadingDigit` unreadable nested ternary — rewrite for clarity.
 - `RemoveLineBreaks` should handle Windows line endings consistently.
