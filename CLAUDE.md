@@ -92,4 +92,3 @@ Remaining design/correctness cleanups (the tail of the modernization effort):
 
 - `ConsoleExtensions` isn't actually extension methods / not static — rename/reshape.
 - `FileSizeString` boundary (`>` vs `>=`) and precision review.
-- `RemoveLineBreaks` should handle Windows line endings consistently.

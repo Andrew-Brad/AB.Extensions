@@ -44,11 +44,14 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Removes Mac (CR) and Unix (LF) line breaks from a string, leaving the remaining text concatenated.
+    /// Removes Windows (CRLF), Mac (CR) and Unix (LF) line breaks from a string, leaving the remaining text concatenated.
     /// </summary>
     /// <param name="lines">The text to strip line breaks from.</param>
-    /// <returns>The text with CR and LF characters removed.</returns>
-    public static string RemoveLineBreaks(this string lines) => lines.Replace(MacLineEnding, string.Empty).Replace(UnixLineEnding, string.Empty);
+    /// <returns>The text with all line endings removed.</returns>
+    public static string RemoveLineBreaks(this string lines) =>
+        lines.Replace(WindowsLineEnding, string.Empty)
+             .Replace(MacLineEnding, string.Empty)
+             .Replace(UnixLineEnding, string.Empty);
 
     /// <summary>
     /// Replaces every Windows (CRLF), Mac (CR) and Unix (LF) line break in a string with the given replacement.
@@ -153,7 +156,7 @@ public static class StringExtensions
 
     /// <summary>
     /// Given a number of bytes, return a string that has a nicer display value for the total in terms of kilobytes, megabytes, and gigabytes.
-    /// Assumes the IEC (non- SI) form where 1024 bytes = 1 MB.  Negative storage values don't make sense.
+    /// Assumes the IEC (non- SI) form where 1024 bytes = 1 KB.  Negative storage values don't make sense.
     /// </summary>
     /// <param name="fileSize"></param>
     /// <returns>Text like '16 GB', or '128 MB'.</returns>
@@ -162,9 +165,11 @@ public static class StringExtensions
     {
         long j = 0;
 
-        while (fileSize > 1024 && j < suffix.Length - 1)
+        // >= so an exact boundary (e.g. 1024 bytes) rolls up to the next unit ("1 KB")
+        // rather than reporting "1024 bytes".
+        while (fileSize >= 1024 && j < suffix.Length - 1)
         {
-            fileSize = fileSize / 1024;
+            fileSize /= 1024;
             j++;
         }
         return (fileSize + StringConstants.Delimiters.Space + suffix[j]);

@@ -141,6 +141,10 @@ public class StringTests
     [InlineData(4194304, "4 MB")]
     [InlineData(46080, "45 KB")]
     [InlineData(0, "0 bytes")]
+    [InlineData(1023, "1023 bytes")]     // just under the first boundary
+    [InlineData(1024, "1 KB")]           // exact boundary rolls up to the next unit
+    [InlineData(1048576, "1 MB")]        // 1024^2: exact MB boundary
+    [InlineData(1073741824, "1 GB")]     // 1024^3: exact GB boundary
     [InlineData(5497558138880, "5120 GB")] // 5 TB: caps at GB instead of indexing past `suffix`
     public void FormatFileSize(long byteCount, string expectedDisplayText)
     {
@@ -251,5 +255,23 @@ public class StringTests
 
         // Assert
         Assert.Equal(expectedCount, actualCount);
+    }
+
+    // RemoveLineBreaks strips Windows (CRLF), Mac (CR) and Unix (LF) endings, leaving the text
+    // concatenated. CRLF is the interesting case: stripping \r and \n individually already collapses
+    // it correctly, so the explicit WindowsLineEnding pass is for symmetry with ReplaceLineBreaks.
+    [Theory]
+    [InlineData("line1\r\nline2\r\nline3", "line1line2line3")]
+    [InlineData("line1\rline2\rline3", "line1line2line3")]
+    [InlineData("line1\nline2\nline3", "line1line2line3")]
+    [InlineData("no breaks here", "no breaks here")]
+    [InlineData("", "")]
+    public void RemoveLineBreaks_Strips_All_Line_Endings(string input, string expected)
+    {
+        // Act
+        string actual = input.RemoveLineBreaks();
+
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }
