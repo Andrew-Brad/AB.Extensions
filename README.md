@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/nuget/dt/AB.Extensions.svg)](https://www.nuget.org/packages/AB.Extensions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 
-A dependency-free collection of C# extension methods and handy
+A dependency-free collection of simple C# extension methods and handy
 constants. Some are sharpened versions of StackOverflow snippets; others are performance-tweaked beyond the normal versions you'd see.
 
 Built and tested on GitHub Actions across Linux and Windows, multi-targeting
