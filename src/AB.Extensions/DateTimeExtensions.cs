@@ -55,10 +55,8 @@ public static class DateTimeExtensions
     /// <returns></returns>
     public static bool IsWeekend(this DayOfWeek d) => !d.IsWeekday();
 
-    // AddWorkdays is calendar-day arithmetic, so the modern surface uses DateOnly — no
-    // time-of-day, kind, or time zone to reason about. netstandard2.0 has no DateOnly, so
-    // that single legacy TFM falls back to the DateTime form. The bodies are identical; only
-    // the date type differs.
+    // AddWorkdays is calendar-day arithmetic, so the modern surface uses DateOnly — no time-of-day, kind, or time zone to reason about.
+    // netstandard2.0 has no DateOnly, so that single legacy TFM falls back to the DateTime form. The bodies are nearly identical.
 #if NETSTANDARD2_0
     /// <summary>
     /// Adds the given number of workdays (Monday–Friday) to a date, skipping weekends.
