@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/nuget/dt/AB.Extensions.svg)](https://www.nuget.org/packages/AB.Extensions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 
-A dependency-free collection of C# extension methods and handy
+A dependency-free collection of simple C# extension methods and handy
 constants. Some are sharpened versions of StackOverflow snippets; others are performance-tweaked beyond the normal versions you'd see.
 
 Built and tested on GitHub Actions across Linux and Windows, multi-targeting
@@ -52,8 +52,8 @@ using AB.Extensions;
 // Parse a string straight into an enum
 "Ascending".ToEnumTypeOf<OrderByDirection>();        // OrderByDirection.Ascending
 
-// Add business days, skipping weekends
-DateTime.Today.AddWorkdays(5);
+// Add business days, skipping weekends (negative subtracts)
+DateOnly.FromDateTime(DateTime.Today).AddWorkdays(5);   // netstandard2.0 takes a DateTime instead
 ```
 
 ## Required Local Tooling
