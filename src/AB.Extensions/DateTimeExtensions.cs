@@ -19,6 +19,11 @@ public static class DateTimeExtensions
     /// <param name="startDate">One end of the range (inclusive).</param>
     /// <param name="endDate">The other end of the range (inclusive).</param>
     /// <param name="compareTime">When true, compares the full <see cref="DateTime"/> value; when false (default), compares date only.</param>
+    /// <remarks>
+    /// Comparison is purely tick-based, mirroring <see cref="DateTime"/>'s own operators: <see cref="DateTime.Kind"/>
+    /// is ignored, so a UTC value and a local value with the same ticks are treated as equal even though they denote
+    /// different instants. For time-zone-aware range checks, use <see cref="DateTimeOffset"/> instead.
+    /// </remarks>
     public static bool IsBetween(this DateTime thisDateTime, DateTime startDate, DateTime endDate, bool compareTime = false)
     {
         if (startDate > endDate) (startDate, endDate) = (endDate, startDate);
@@ -39,14 +44,12 @@ public static class DateTimeExtensions
     /// </summary>
     /// <param name="thisDayOfWeek"></param>
     /// <returns></returns>
-    public static bool IsWeekday(this DayOfWeek thisDayOfWeek)
-    {
-        return thisDayOfWeek switch
+    public static bool IsWeekday(this DayOfWeek thisDayOfWeek) =>
+        thisDayOfWeek switch
         {
             DayOfWeek.Sunday or DayOfWeek.Saturday => false,
             _ => true
         };
-    }
 
     /// <summary>
     /// Returns true if Saturday or Sunday.
@@ -67,7 +70,7 @@ public static class DateTimeExtensions
     /// <returns>The resulting date, always landing on a weekday.</returns>
     public static DateTime AddWorkdays(this DateTime d, int days)
     {
-        // A weekend start is normalized onto a weekday in the direction of travel (forward when days == 0, preserving the historic behaviour).
+        // A weekend start is normalized onto a weekday in the direction of travel (forward when days == 0, preserving the historic behavior).
         int direction = Math.Sign(days);
         int step = direction == 0 ? 1 : direction;
 

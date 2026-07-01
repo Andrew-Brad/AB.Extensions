@@ -6,17 +6,18 @@
 public static class IntExtensions
 {
     /// <summary>
-    /// Returns the first ordinal digit for a given <see cref="Int32"/>.
+    /// Returns the leading (most significant) decimal digit of an integer, ignoring its sign.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">The number whose leading digit is wanted.</param>
+    /// <returns>
+    /// The first digit of the number's magnitude (1–9), or <c>0</c> when <paramref name="value"/> is zero.
+    /// The sign is ignored, so <c>-42</c> and <c>42</c> both yield <c>4</c>.
+    /// </returns>
     public static int LeadingDigit(this int value)
     {
-        if (value < 0 && (value = -value) < 0) return 2;
-        return (value < 100) ? (value < 1) ? 0 : (value < 10)
-                ? value : value / 10 : (value < 1000000) ? (value < 10000)
-                ? (value < 1000) ? value / 100 : value / 1000 : (value < 100000)
-                ? value / 10000 : value / 100000 : (value < 100000000)
-                ? (value < 10000000) ? value / 1000000 : value / 10000000
-                : (value < 1000000000) ? value / 100000000 : value / 1000000000;
+        // Widen to long before negating so int.MinValue (which has no positive int counterpart) doesn't overflow.
+        uint magnitude = value < 0 ? (uint)-(long)value : (uint)value;
+        while (magnitude >= 10) magnitude /= 10;
+        return (int)magnitude;
     }
 }

@@ -1,64 +1,104 @@
-﻿using System;
-using System.Globalization;
-
-using AB.Extensions;
-
+﻿using System.Globalization;
 using Xunit;
 
-namespace ABExtensions.Tests;
+namespace AB.Extensions.Tests;
 
 public class DateTimeExtensionsTests
 {
-    [Fact]
-    public void IsBetween_1() => Assert.True(DateTime.Now.IsBetween(DateTime.Now.AddSeconds(-1), DateTime.Now.AddSeconds(1)));
+    // --- IsBetween ---
+    // Bounds inclusive on both ends; reversed bounds normalized; default ignores time-of-day, compareTime opts in.
 
-    [Fact]
-    public void IsBetween_2()
+    [Theory]
+    // thisDate      lowerBound    upperBound    expected
+    [InlineData("2024-06-15", "2024-06-14", "2024-06-16", true)]  // squarely inside
+    [InlineData("2024-06-14", "2024-06-14", "2024-06-16", true)]  // on the lower bound (inclusive)
+    [InlineData("2024-06-16", "2024-06-14", "2024-06-16", true)]  // on the upper bound (inclusive)
+    [InlineData("2024-06-15", "2024-06-15", "2024-06-15", true)]  // identical bounds: the date is "between" itself
+    [InlineData("2024-06-13", "2024-06-14", "2024-06-16", false)] // just below the range
+    [InlineData("2024-06-17", "2024-06-14", "2024-06-16", false)] // just above the range
+    public void IsBetween_TreatsBoundsAsInclusive(string date, string lower, string upper, bool expected) =>
+        Assert.Equal(expected, Dt(date).IsBetween(Dt(lower), Dt(upper)));
+
+    // Reversed bounds must give the same answer as natural order.
+    [Theory]
+    [InlineData("2024-06-15", "2024-12-31", "2024-01-01", true)]  // inside the (flipped) range
+    [InlineData("2025-01-01", "2024-12-31", "2024-01-01", false)] // outside the (flipped) range
+    public void IsBetween_NormalizesReversedBounds(string date, string start, string end, bool expected) =>
+        Assert.Equal(expected, Dt(date).IsBetween(Dt(start), Dt(end)));
+
+    // compareTime flips the answer on identical inputs: off = date-only compare, on = full instant.
+    [Theory]
+    // thisInstant         lowerBound          upperBound          compareTime expected
+    [InlineData("2024-06-15 08:00", "2024-06-15 09:00", "2024-06-15 17:00", false, true)]  // before the window, but same date
+    [InlineData("2024-06-15 08:00", "2024-06-15 09:00", "2024-06-15 17:00", true, false)]  // before the window, time now matters
+    [InlineData("2024-06-15 23:59", "2024-06-15 09:00", "2024-06-15 17:00", false, true)]  // after the window, but same date
+    [InlineData("2024-06-15 12:00", "2024-06-15 09:00", "2024-06-15 17:00", true, true)]   // inside the time window
+    [InlineData("2024-06-15 17:00", "2024-06-15 09:00", "2024-06-15 17:00", true, true)]   // on the upper bound, to the minute (inclusive)
+    public void IsBetween_CompareTime_TogglesTimeOfDaySignificance(string instant, string lower, string upper, bool compareTime, bool expected) =>
+        Assert.Equal(expected, Dt(instant).IsBetween(Dt(lower), Dt(upper), compareTime));
+
+    // compareTime inclusivity holds down to a single tick. atUpper picks which bound the offset applies to.
+    [Theory]
+    // atUpper  tickOffset  expected
+    [InlineData(false, 0L, true)]   // exactly on the lower bound (inclusive)
+    [InlineData(false, -1L, false)] // one tick below the lower bound
+    [InlineData(false, 1L, true)]   // one tick inside the lower bound
+    [InlineData(true, 0L, true)]    // exactly on the upper bound (inclusive)
+    [InlineData(true, 1L, false)]   // one tick above the upper bound
+    [InlineData(true, -1L, true)]   // one tick inside the upper bound
+    public void IsBetween_CompareTime_IsInclusiveToTheTick(bool atUpper, long tickOffset, bool expected)
     {
-        bool isBetween = DateTime.Now.IsBetween(DateTime.Now.AddSeconds(1), DateTime.Now.AddSeconds(2), true);
-        Assert.False(isBetween);
+        DateTime lower = new(2024, 6, 15, 9, 0, 0);
+        DateTime upper = new(2024, 6, 15, 17, 0, 0);
+        DateTime point = (atUpper ? upper : lower).AddTicks(tickOffset);
+        Assert.Equal(expected, point.IsBetween(lower, upper, compareTime: true));
     }
 
+    // Degenerate window: bounds one tick apart. Both ends inclusive, a tick outside falls out.
     [Fact]
-    public void IsBetween_3() => Assert.False(DateTime.Now.IsBetween(DateTime.Now.AddSeconds(1), DateTime.Now.AddSeconds(1), true));
-
-    [Fact]
-    public void IsBetween_4() => Assert.True(DateTime.MinValue.IsBetween(DateTime.MinValue, DateTime.MinValue, true)); //identical dates are considered between each other
-
-    // Flipped bounds: startDate > endDate should produce the same result as the correct order.
-    [Fact]
-    public void IsBetween_FlippedBounds_DateInRange_ReturnsTrue() =>
-        Assert.True(new DateTime(2024, 6, 15).IsBetween(new DateTime(2024, 12, 31), new DateTime(2024, 1, 1)));
-
-    [Fact]
-    public void IsBetween_FlippedBounds_DateOutOfRange_ReturnsFalse() =>
-        Assert.False(new DateTime(2025, 1, 1).IsBetween(new DateTime(2024, 12, 31), new DateTime(2024, 1, 1)));
-
-    [Fact]
-    public void IsBetween_FlippedBounds_WithTime_DateInRange_ReturnsTrue() =>
-        Assert.True(new DateTime(2024, 6, 15, 12, 0, 0).IsBetween(new DateTime(2024, 12, 31), new DateTime(2024, 1, 1), compareTime: true));
-
-    [Fact]
-    public void Year_2000_Is_LeapYear() => Assert.True(DateTime.IsLeapYear(2000));
-
-    [Fact]
-    public void Year_1921_Is_LeapYear() => Assert.False(DateTime.IsLeapYear(1921));
-
-    [Fact]
-    public void Year_1900_Is_LeapYear() => Assert.False(DateTime.IsLeapYear(1900));
-
-    [Fact]
-    public void LeapYears_Negative_Cases()
+    public void IsBetween_CompareTime_HandlesAOneTickWideWindow()
     {
-        Assert.False(DateTime.IsLeapYear(2019));
-        Assert.True(DateTime.IsLeapYear(2020));
-        Assert.False(DateTime.IsLeapYear(2021));
+        DateTime lower = new(2024, 6, 15, 12, 0, 0);
+        DateTime upper = lower.AddTicks(1);
+
+        Assert.True(lower.IsBetween(lower, upper, compareTime: true));
+        Assert.True(upper.IsBetween(lower, upper, compareTime: true));
+        Assert.False(upper.AddTicks(1).IsBetween(lower, upper, compareTime: true));
     }
+
+    // Pins the documented Kind-blindness: comparison is tick-only, so identical ticks with different
+    // DateTimeKind values compare equal. A spec test that locks the behavior against a "helpful" refactor.
+    [Fact]
+    public void IsBetween_IgnoresDateTimeKind_ComparingByTicksAlone()
+    {
+        long ticks = new DateTime(2024, 6, 15, 12, 0, 0).Ticks;
+        DateTime utc = new(ticks, DateTimeKind.Utc);
+        DateTime local = new(ticks, DateTimeKind.Local);
+        DateTime unspecified = new(ticks, DateTimeKind.Unspecified);
+
+        // All three share the same ticks, so each sits "between" the others regardless of Kind.
+        Assert.True(utc.IsBetween(local, unspecified, compareTime: true));
+        Assert.True(local.IsBetween(utc, utc, compareTime: true));
+    }
+
+    // --- IsLeapYear ---
+    // Gregorian rule: divisible by 4, EXCEPT centuries, EXCEPT centuries divisible by 400. One case per branch.
+
+    [Theory]
+    // year  expected  branch
+    [InlineData(2024, true)]   // ÷4, not a century → leap
+    [InlineData(2023, false)]  // not ÷4 → common
+    [InlineData(2020, true)]   // ÷4 → leap
+    [InlineData(2000, true)]   // century ÷400 → leap (the famous exception-to-the-exception)
+    [InlineData(1900, false)]  // century not ÷400 → common
+    [InlineData(2100, false)]  // century not ÷400 → common
+    [InlineData(1600, true)]   // century ÷400 → leap
+    [InlineData(1, false)]     // year 1 (DateTime.MinValue's year) → common
+    public void IsLeapYear_FollowsTheGregorianRule(int year, bool expected) =>
+        Assert.Equal(expected, new DateTime(year, 1, 1).IsLeapYear());
 
     // --- AddWorkdays: anchored on the week of Mon 2026-06-01 ... Sun 2026-06-07 ---
-    // Exercises the modern DateOnly overload (the only one visible to this net8+ test project;
-    // the netstandard2.0 DateTime overload shares the same body but is legacy-only).
-    // Contract: a weekend start normalizes forward to Monday, then each workday step skips weekends.
+    // Exercises the DateOnly overload (net8+); a weekend start normalizes toward Monday, then steps skip weekends.
 
     [Theory]
     [InlineData("2026-06-01", "2026-06-02")] // Mon → Tue
@@ -86,8 +126,7 @@ public class DateTimeExtensionsTests
     public void AddWorkdays_Zero_NormalizesWeekendToNextWeekday(string start, string expected) =>
         Assert.Equal(Date(expected), Date(start).AddWorkdays(0));
 
-    // Negative steps walk backwards. A weekend start normalizes *backwards* to Friday
-    // (the direction of travel), the mirror of the forward-to-Monday positive case.
+    // Negative steps walk backwards; a weekend start normalizes back to Friday (mirror of the positive case).
 
     [Theory]
     [InlineData("2026-06-05", "2026-06-04")] // Fri → Thu
@@ -106,7 +145,7 @@ public class DateTimeExtensionsTests
     public void AddWorkdays_NegativeMultiDay_SkipsWeekends(string start, int days, string expected) =>
         Assert.Equal(Date(expected), Date(start).AddWorkdays(-days));
 
-    // Round-trip: from a weekday start, +n then -n returns to the start (and vice versa).
+    // Round-trip: from a weekday start, +n then -n returns to the start.
     [Theory]
     [InlineData("2026-06-01")] // Mon
     [InlineData("2026-06-03")] // Wed
@@ -138,4 +177,8 @@ public class DateTimeExtensionsTests
     }
 
     private static DateOnly Date(string iso) => DateOnly.ParseExact(iso, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    // Parses either a bare date ("yyyy-MM-dd") or a date-with-time ("yyyy-MM-dd HH:mm").
+    private static DateTime Dt(string value) =>
+        DateTime.ParseExact(value, ["yyyy-MM-dd", "yyyy-MM-dd HH:mm"], CultureInfo.InvariantCulture, DateTimeStyles.None);
 }

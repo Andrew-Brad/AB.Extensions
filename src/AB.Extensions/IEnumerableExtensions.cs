@@ -169,17 +169,21 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
-    /// Reorders elements in the IList based on a pseudo-random, thread-safe, environment tick count seed.
+    /// Reorders the elements of <paramref name="list"/> in place using a Fisher–Yates shuffle.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
+    /// <typeparam name="T">The element type of the list.</typeparam>
+    /// <param name="list">The list to shuffle in place.</param>
+    /// <param name="rng">
+    /// The random source to draw from. When <c>null</c> (the default), a thread-safe default is used (a per-thread instance on netstandard2.0, or <see cref="Random.Shared"/> on modern TFMs);
+    /// pass a seeded <see cref="Random"/> for a deterministic, reproducible shuffle (e.g. in tests).
+    /// </param>
     // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
-    public static void Shuffle<T>(this IList<T> list)
+    public static void Shuffle<T>(this IList<T> list, Random? rng = null)
     {
 #if NETSTANDARD2_0
-        Random rng = ThreadSafeRandom.ThisThreadsRandom;
+        rng ??= ThreadSafeRandom.ThisThreadsRandom;
 #else
-        Random rng = Random.Shared; // thread-safe since .NET 6
+        rng ??= Random.Shared; // thread-safe since .NET 6
 #endif
         int n = list.Count;
         while (n > 1)

@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Xunit;
 
 namespace AB.Extensions.Tests;
@@ -12,73 +7,63 @@ public class IEnumerableTests
     [Fact]
     public void Shuffle_Empty_List_Returns_Empty()
     {
-        //Arrange
         IList<int> noNumbers = new List<int>();
-        //Act
         noNumbers.Shuffle();
-        //Assert
         Assert.Empty(noNumbers);
     }
 
+    // A shuffle is a permutation: same elements, reordered. Asserting that (not "order changed") keeps it deterministic.
     [Theory]
     [InlineData(1, 5)]
     [InlineData(2, 458)]
     [InlineData(-10, 10)]
     [InlineData(short.MinValue, short.MaxValue)]
     [InlineData(byte.MinValue, byte.MaxValue)]
-    //[InlineData(0, 147483647)]
-    //[InlineData(0, 2147483647)] // certain high int values throw OutOfMemoryExceptions (unrelated to logic)
-    public void Shuffle_Valid_List_Does_Shuffle(int startNumber, int totalNumbers)
+    //[InlineData(0, 2147483647)] // huge ranges OOM — unrelated to the logic
+    public void Shuffle_PreservesAllElements(int startNumber, int totalNumbers)
     {
-        //Arrange
-        IList<int> orderedNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
-        IList<int> shuffledNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
+        IList<int> original = Enumerable.Range(startNumber, totalNumbers).ToList();
+        IList<int> shuffled = Enumerable.Range(startNumber, totalNumbers).ToList();
 
-        //Act
-        shuffledNumbers.Shuffle();
+        shuffled.Shuffle();
 
-        //Assert
-        Assert.False(orderedNumbers.SequenceEqual(shuffledNumbers));
+        Assert.Equal(original.OrderBy(x => x), shuffled.OrderBy(x => x));
+    }
+
+    // Seeded Random makes the shuffle reproducible; across 500 elements "unchanged" is effectively impossible.
+    [Fact]
+    public void Shuffle_WithSeededRandom_IsReproducibleAndReorders()
+    {
+        IList<int> original = Enumerable.Range(1, 500).ToList();
+        IList<int> first = Enumerable.Range(1, 500).ToList();
+        IList<int> second = Enumerable.Range(1, 500).ToList();
+
+        first.Shuffle(new Random(12345));
+        second.Shuffle(new Random(12345));
+
+        Assert.Equal(first, second);                                   // same seed → same permutation
+        Assert.NotEqual(original, first);                              // it reordered
+        Assert.Equal(original.OrderBy(x => x), first.OrderBy(x => x)); // still a permutation
     }
 
     [Fact]
-    public void Shuffle_Valid_List_Handles_1_Element()
+    public void Shuffle_SingleElement_IsUnchanged()
     {
-        //Arrange
-        IList<int> orderedNumbers = Enumerable.Range(1, 1).ToList();
-        IList<int> shuffledNumbers = Enumerable.Range(1, 1).ToList();
+        IList<int> numbers = new List<int> { 42 };
 
-        //Act
-        shuffledNumbers.Shuffle();
+        numbers.Shuffle();
 
-        //Assert
-        Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
-    }
-
-    [Fact]
-    public void Shuffle_Valid_List_Handles_0_Elements()
-    {
-        //Arrange
-        IList<int> orderedNumbers = new List<int>();
-        IList<int> shuffledNumbers = new List<int>();
-
-        //Act
-        shuffledNumbers.Shuffle();
-
-        //Assert
-        Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
+        Assert.Equal(new[] { 42 }, numbers);
     }
 
     [Fact]
     public void TakeUntil_Subset_Valid_List()
     {
-        //Arrange
         IList<int> numbers = Enumerable.Range(1, 10).ToList();
-        IList<int> expected = Enumerable.Range(1, 3).ToList();
-        //Act
-        var assertionList = numbers.TakeUntil(x => x == 3).ToList();
-        //Assert
-        Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+
+        var result = numbers.TakeUntil(x => x == 3).ToList();
+
+        Assert.Equal(new[] { 1, 2, 3 }, result);
     }
 
     [Theory]
@@ -88,13 +73,11 @@ public class IEnumerableTests
     [InlineData(short.MaxValue)]
     public void TakeUntil_All_Elements_Valid_List(int count)
     {
-        //Arrange
         IList<int> numbers = Enumerable.Range(1, count).ToList();
-        IList<int> expected = Enumerable.Range(1, count).ToList();
-        //Act
-        var assertionList = numbers.TakeUntil(x => x == numbers.Count).ToList();
-        //Assert
-        Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+
+        var result = numbers.TakeUntil(x => x == numbers.Count).ToList();
+
+        Assert.Equal(Enumerable.Range(1, count), result);
     }
 
     [Theory]
@@ -105,15 +88,8 @@ public class IEnumerableTests
     [InlineData(new int[] { -1, 1 }, true)]
     [InlineData(new int[] { -9, -6, -1, 0, 1 }, true)]
     [InlineData(new int[] { -9, -10, -1, 0, 1 }, false)]
-    public void Is_Monotonically_Increasing_Get_Enumerator(int[] inputList, bool isIncreasingAssert)
-    {
-        //Arrange
-
-        //Act
-        bool isIncreasing = inputList.IsMonotonicallyIncreasing();
-        //Assert
-        Assert.Equal(isIncreasingAssert, isIncreasing);
-    }
+    public void Is_Monotonically_Increasing_Get_Enumerator(int[] inputList, bool isIncreasingAssert) =>
+        Assert.Equal(isIncreasingAssert, inputList.IsMonotonicallyIncreasing());
 
     // --- OrderBy(direction) ---
 
@@ -129,7 +105,6 @@ public class IEnumerableTests
     public void OrderBy_WithExplicitComparer_Descending()
     {
         string[] words = { "bb", "a", "ccc" };
-        // order by length, descending, via the comparer overload
         var result = words.OrderBy(w => w.Length, Comparer<int>.Default, OrderByDirection.Descending);
         Assert.Equal(new[] { "ccc", "bb", "a" }, result);
     }
@@ -147,7 +122,7 @@ public class IEnumerableTests
         var result = People.OrderBy(p => p.Age, OrderByDirection.Ascending)
                            .ThenBy(p => p.Name, OrderByDirection.Descending)
                            .Select(p => p.Name);
-        Assert.Equal(new[] { "Cy", "Bob", "Amy" }, result); // age asc, then name desc within age 30
+        Assert.Equal(new[] { "Cy", "Bob", "Amy" }, result); // age asc, name desc within age 30
     }
 
     [Fact]
@@ -156,7 +131,7 @@ public class IEnumerableTests
         var result = People.OrderBy(p => p.Age, OrderByDirection.Ascending)
                            .ThenBy(p => p.Name, Comparer<string>.Default, OrderByDirection.Ascending)
                            .Select(p => p.Name);
-        Assert.Equal(new[] { "Cy", "Amy", "Bob" }, result); // age asc, then name asc within age 30
+        Assert.Equal(new[] { "Cy", "Amy", "Bob" }, result); // age asc, name asc within age 30
     }
 
     // --- SkipUntil ---
@@ -183,7 +158,7 @@ public class IEnumerableTests
     public void SkipUntil_NullPredicate_Throws() =>
         Assert.Throws<ArgumentNullException>(() => Enumerable.Range(1, 3).SkipUntil(null!));
 
-    // --- TakeUntil null guards (happy path covered above) ---
+    // --- TakeUntil null guards ---
 
     [Fact]
     public void TakeUntil_NullSource_Throws() =>
