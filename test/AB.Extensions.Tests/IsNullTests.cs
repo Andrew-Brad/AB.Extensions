@@ -52,8 +52,8 @@ public class IsNullTests
         Assert.False(((System.DayOfWeek?)System.DayOfWeek.Monday).IsNull());
     }
 
-    // --- Predicate composition: the documented value — passable as Func<T,bool> via a method group,
-    //     which the `is null` operator can't be. Overload resolution picks class vs struct by constraint. ---
+    // --- Predicate composition: usable as a Func<T,bool> method group (which `is null` can't be);
+    //     overload resolution picks class vs struct by constraint. ---
 
     [Fact]
     public void IsNull_UsableAsPredicate_ForReferenceTypes()

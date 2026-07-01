@@ -5,11 +5,8 @@ namespace AB.Extensions.Tests;
 
 public class DateTimeExtensionsTests
 {
-    // --- IsBetween: a fixed-instant, data-driven sweep of the contract ---
-    // Everything is anchored to literal dates (never DateTime.Now), so the range
-    // logic is exercised deterministically with no wall-clock skew or flaky windows.
-    // Contract: bounds are inclusive on both ends; reversed bounds (start > end) are
-    // normalized; the default ignores the time-of-day, and compareTime opts into it.
+    // --- IsBetween ---
+    // Bounds inclusive on both ends; reversed bounds normalized; default ignores time-of-day, compareTime opts in.
 
     [Theory]
     // thisDate      lowerBound    upperBound    expected
@@ -22,15 +19,14 @@ public class DateTimeExtensionsTests
     public void IsBetween_TreatsBoundsAsInclusive(string date, string lower, string upper, bool expected) =>
         Assert.Equal(expected, Dt(date).IsBetween(Dt(lower), Dt(upper)));
 
-    // Reversed bounds (start > end) must yield the same answer as the natural order.
+    // Reversed bounds must give the same answer as natural order.
     [Theory]
     [InlineData("2024-06-15", "2024-12-31", "2024-01-01", true)]  // inside the (flipped) range
     [InlineData("2025-01-01", "2024-12-31", "2024-01-01", false)] // outside the (flipped) range
     public void IsBetween_NormalizesReversedBounds(string date, string start, string end, bool expected) =>
         Assert.Equal(expected, Dt(date).IsBetween(Dt(start), Dt(end)));
 
-    // The crux of compareTime: identical inputs, opposite answers. With it off the
-    // time-of-day is discarded (date-only compare); with it on the full instant counts.
+    // compareTime flips the answer on identical inputs: off = date-only compare, on = full instant.
     [Theory]
     // thisInstant         lowerBound          upperBound          compareTime expected
     [InlineData("2024-06-15 08:00", "2024-06-15 09:00", "2024-06-15 17:00", false, true)]  // before the window, but same date
@@ -41,9 +37,7 @@ public class DateTimeExtensionsTests
     public void IsBetween_CompareTime_TogglesTimeOfDaySignificance(string instant, string lower, string upper, bool compareTime, bool expected) =>
         Assert.Equal(expected, Dt(instant).IsBetween(Dt(lower), Dt(upper), compareTime));
 
-    // compareTime inclusivity holds all the way down to a single tick (100ns) — far finer than the
-    // minute-level cases above. Built with AddTicks rather than string literals, which get unwieldy
-    // at tick precision. atUpper selects which bound the offset is applied to.
+    // compareTime inclusivity holds down to a single tick. atUpper picks which bound the offset applies to.
     [Theory]
     // atUpper  tickOffset  expected
     [InlineData(false, 0L, true)]   // exactly on the lower bound (inclusive)
@@ -60,7 +54,7 @@ public class DateTimeExtensionsTests
         Assert.Equal(expected, point.IsBetween(lower, upper, compareTime: true));
     }
 
-    // Degenerate window: bounds one tick apart. Both ends are still inclusive, and a tick outside falls out.
+    // Degenerate window: bounds one tick apart. Both ends inclusive, a tick outside falls out.
     [Fact]
     public void IsBetween_CompareTime_HandlesAOneTickWideWindow()
     {
@@ -72,9 +66,8 @@ public class DateTimeExtensionsTests
         Assert.False(upper.AddTicks(1).IsBetween(lower, upper, compareTime: true));
     }
 
-    // Pins the documented Kind-blindness: DateTime comparison is tick-only, so identical ticks with
-    // different DateTimeKind values compare equal even though Utc/Local noon are different instants.
-    // This is a spec test, not a bug test — it locks the behavior against a future "helpful" refactor.
+    // Pins the documented Kind-blindness: comparison is tick-only, so identical ticks with different
+    // DateTimeKind values compare equal. A spec test that locks the behavior against a "helpful" refactor.
     [Fact]
     public void IsBetween_IgnoresDateTimeKind_ComparingByTicksAlone()
     {
@@ -88,10 +81,8 @@ public class DateTimeExtensionsTests
         Assert.True(local.IsBetween(utc, utc, compareTime: true));
     }
 
-    // --- IsLeapYear: the full Gregorian rule, exercised on the extension (not BCL DateTime.IsLeapYear) ---
-    // Rule: a year divisible by 4 is a leap year, EXCEPT centuries, EXCEPT centuries divisible by 400.
-    // Each case pins one branch of that rule. The year is wrapped in a DateTime because the extension
-    // operates on a date, not a bare int — so this genuinely covers our method, not the framework's.
+    // --- IsLeapYear ---
+    // Gregorian rule: divisible by 4, EXCEPT centuries, EXCEPT centuries divisible by 400. One case per branch.
 
     [Theory]
     // year  expected  branch
@@ -107,9 +98,7 @@ public class DateTimeExtensionsTests
         Assert.Equal(expected, new DateTime(year, 1, 1).IsLeapYear());
 
     // --- AddWorkdays: anchored on the week of Mon 2026-06-01 ... Sun 2026-06-07 ---
-    // Exercises the modern DateOnly overload (the only one visible to this net8+ test project;
-    // the netstandard2.0 DateTime overload shares the same body but is legacy-only).
-    // Contract: a weekend start normalizes forward to Monday, then each workday step skips weekends.
+    // Exercises the DateOnly overload (net8+); a weekend start normalizes toward Monday, then steps skip weekends.
 
     [Theory]
     [InlineData("2026-06-01", "2026-06-02")] // Mon → Tue
@@ -137,8 +126,7 @@ public class DateTimeExtensionsTests
     public void AddWorkdays_Zero_NormalizesWeekendToNextWeekday(string start, string expected) =>
         Assert.Equal(Date(expected), Date(start).AddWorkdays(0));
 
-    // Negative steps walk backwards. A weekend start normalizes *backwards* to Friday
-    // (the direction of travel), the mirror of the forward-to-Monday positive case.
+    // Negative steps walk backwards; a weekend start normalizes back to Friday (mirror of the positive case).
 
     [Theory]
     [InlineData("2026-06-05", "2026-06-04")] // Fri → Thu
@@ -157,7 +145,7 @@ public class DateTimeExtensionsTests
     public void AddWorkdays_NegativeMultiDay_SkipsWeekends(string start, int days, string expected) =>
         Assert.Equal(Date(expected), Date(start).AddWorkdays(-days));
 
-    // Round-trip: from a weekday start, +n then -n returns to the start (and vice versa).
+    // Round-trip: from a weekday start, +n then -n returns to the start.
     [Theory]
     [InlineData("2026-06-01")] // Mon
     [InlineData("2026-06-03")] // Wed

@@ -1,13 +1,11 @@
 using Xunit;
 
-// Namespace aligned with every other test file (was the odd-one-out "ABExtensions.Tests").
-// The extension methods live in the parent AB.Extensions namespace, visible here without a using;
-// ImplicitUsings covers System, System.Collections.Generic, System.IO and System.Linq.
+// Extension methods live in the parent AB.Extensions namespace; ImplicitUsings covers the System usings.
 namespace AB.Extensions.Tests;
 
 public class StringTests
 {
-    // --- ToReverseString: null and empty echo through unchanged ---
+    // --- ToReverseString ---
 
     [Theory]
     [InlineData("hi!", "!ih")]
@@ -17,7 +15,7 @@ public class StringTests
     public void ToReverseString_ReversesCharacters(string? input, string? expected) =>
         Assert.Equal(expected, input.ToReverseString());
 
-    // --- ToGuid: valid input parses regardless of the throw flag ---
+    // --- ToGuid ---
 
     [Theory]
     [InlineData(true)]
@@ -28,7 +26,7 @@ public class StringTests
         Assert.Equal(Guid.Parse(input), input.ToGuid(throwOnInvalid));
     }
 
-    // Invalid input is forgiving by default — Guid.Empty rather than an exception.
+    // Forgiving by default: Guid.Empty rather than throwing.
     [Theory]
     [InlineData("~~~~~d2sdd650790-bc80-41a9-ae63-dd55e2240296")]
     [InlineData("")]
@@ -36,16 +34,15 @@ public class StringTests
     public void ToGuid_InvalidString_ReturnsEmpty_ByDefault(string? input) =>
         Assert.Equal(Guid.Empty, input.ToGuid());
 
-    // ...unless the caller opts into throwing.
     [Fact]
     public void ToGuid_InvalidString_Throws_WhenRequested() =>
         Assert.Throws<FormatException>(() => "not-a-guid".ToGuid(throwExceptionIfInvalid: true));
 
-    // --- ToEnumTypeOf: case-insensitive name parse ---
+    // --- ToEnumTypeOf ---
 
     [Theory]
     [InlineData("Ascending", OrderByDirection.Ascending)]
-    [InlineData("descending", OrderByDirection.Descending)] // parse is case-insensitive
+    [InlineData("descending", OrderByDirection.Descending)] // case-insensitive
     public void ToEnumTypeOf_ParsesMemberName(string input, OrderByDirection expected) =>
         Assert.Equal(expected, input.ToEnumTypeOf<OrderByDirection>());
 
@@ -53,16 +50,16 @@ public class StringTests
     public void ToEnumTypeOf_UnknownName_Throws() =>
         Assert.Throws<ArgumentException>(() => "lol".ToEnumTypeOf<OrderByDirection>());
 
-    // --- CountOccurrencesOf: non-overlapping count, null/empty-safe ---
+    // --- CountOccurrencesOf ---
 
     [Theory]
     [InlineData("lol", "l", 2)]
-    [InlineData("banana", "ana", 1)]  // non-overlapping: the second "ana" overlaps the first, so it isn't counted
-    [InlineData("aaaa", "aa", 2)]     // non-overlapping run
-    [InlineData("abc", "z", 0)]       // needle absent
-    [InlineData("", "l", 0)]          // empty text
-    [InlineData("abc", "", 0)]        // empty needle can't match (and must not spin forever)
-    [InlineData(null, "l", 0)]        // null text
+    [InlineData("banana", "ana", 1)]  // non-overlapping
+    [InlineData("aaaa", "aa", 2)]
+    [InlineData("abc", "z", 0)]
+    [InlineData("", "l", 0)]
+    [InlineData("abc", "", 0)]        // empty needle: 0, and must not spin forever
+    [InlineData(null, "l", 0)]
     public void CountOccurrencesOf_CountsNonOverlapping(string? text, string needle, int expected) =>
         Assert.Equal(expected, text.CountOccurrencesOf(needle));
 
@@ -74,16 +71,15 @@ public class StringTests
     [InlineData(4194304, "4 MB")]
     [InlineData(46080, "45 KB")]
     [InlineData(0, "0 bytes")]
-    [InlineData(1023, "1023 bytes")]        // just under the first boundary
-    [InlineData(1024, "1 KB")]              // exact boundary rolls up to the next unit
-    [InlineData(1048576, "1 MB")]           // 1024^2: exact MB boundary
-    [InlineData(1073741824, "1 GB")]        // 1024^3: exact GB boundary
-    [InlineData(5497558138880, "5120 GB")]  // 5 TB: caps at GB instead of indexing past `suffix`
+    [InlineData(1023, "1023 bytes")]        // just under the boundary
+    [InlineData(1024, "1 KB")]              // exact boundary rolls up
+    [InlineData(1048576, "1 MB")]
+    [InlineData(1073741824, "1 GB")]
+    [InlineData(5497558138880, "5120 GB")]  // 5 TB caps at GB
     public void FileSizeString_FormatsWithIecUnits(long byteCount, string expected) =>
         Assert.Equal(expected, ((ulong)byteCount).FileSizeString());
 
-    // --- SplitQuotedCsv: splits on commas but keeps quoted segments intact ---
-    // Assert the actual fields, not just the count, so distinct inputs can't pass interchangeably.
+    // --- SplitQuotedCsv: assert fields, not just count ---
 
     [Fact]
     public void SplitQuotedCsv_KeepsQuotedCommasTogether() =>
@@ -101,10 +97,8 @@ public class StringTests
     public void SplitQuotedCsv_NullOrEmpty_YieldsNothing(string? input) =>
         Assert.Empty(input.SplitQuotedCsv());
 
-    // --- SplitStringByLineBreaks: on-disk fixtures pinned byte-for-byte in .gitattributes ---
-    // (eol=lf / eol=crlf / -text) so each fixture keeps the ending it claims across the git
-    // round-trip on every platform — unlike the old `* text=auto`, which normalized them all to
-    // LF and let the "Windows" case silently pass while actually testing Unix endings.
+    // --- SplitStringByLineBreaks ---
+    // Fixtures are byte-pinned in .gitattributes (eol=lf/crlf/-text) so each keeps its ending across the git round-trip.
     [Theory]
     [InlineData("windows_line_ending.txt", "\r\n")]
     [InlineData("unix_line_ending.txt", "\n")]
@@ -113,16 +107,14 @@ public class StringTests
     {
         string content = File.ReadAllText(fileName);
 
-        // The fixture genuinely holds the ending it claims — not a normalized substitute.
+        // Confirm the fixture really holds the ending it claims.
         Assert.Contains(lineEnding, content);
         if (lineEnding == StringConstants.UnixLineEnding) Assert.DoesNotContain("\r", content);
         if (lineEnding == StringConstants.MacLineEnding) Assert.DoesNotContain("\n", content);
 
-        // Content, not just count, so the three cases can't pass interchangeably.
         Assert.Equal(new[] { "line1", "line2", "line3" }, content.SplitStringByLineBreaks());
     }
 
-    // In-memory split across all three OS endings, built from the constants themselves.
     [Theory]
     [InlineData(StringConstants.WindowsLineEnding)]
     [InlineData(StringConstants.UnixLineEnding)]
@@ -140,9 +132,8 @@ public class StringTests
         Assert.Equal(new[] { "line1", "line3" }, content.SplitStringByLineBreaks(removeEmptyLines: true));
     }
 
-    // --- RemoveLineBreaks / ReplaceLineBreaks: strip or substitute all three endings ---
-    // CRLF is the interesting case: stripping \r and \n individually already collapses it,
-    // so the explicit CRLF pass is for symmetry between the two methods.
+    // --- RemoveLineBreaks / ReplaceLineBreaks ---
+
     [Theory]
     [InlineData("line1\r\nline2\r\nline3", "line1line2line3")]
     [InlineData("line1\rline2\rline3", "line1line2line3")]
@@ -152,6 +143,7 @@ public class StringTests
     public void RemoveLineBreaks_StripsAllEndings(string input, string expected) =>
         Assert.Equal(expected, input.RemoveLineBreaks());
 
+    // CRLF replaced as one unit (one space), not \r + \n separately (two).
     [Theory]
     [InlineData("line1\r\nline2", "line1 line2")]
     [InlineData("line1\rline2", "line1 line2")]
