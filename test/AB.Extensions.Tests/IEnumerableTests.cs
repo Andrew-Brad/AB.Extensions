@@ -20,65 +20,64 @@ public class IEnumerableTests
         Assert.Empty(noNumbers);
     }
 
+    // The invariant that always holds, whatever the RNG yields: a shuffle is a permutation —
+    // same multiset of elements, merely reordered. Asserting this (rather than "the order changed")
+    // is what makes the test deterministic instead of a 1-in-n! coin flip.
     [Theory]
     [InlineData(1, 5)]
     [InlineData(2, 458)]
     [InlineData(-10, 10)]
     [InlineData(short.MinValue, short.MaxValue)]
     [InlineData(byte.MinValue, byte.MaxValue)]
-    //[InlineData(0, 147483647)]
     //[InlineData(0, 2147483647)] // certain high int values throw OutOfMemoryExceptions (unrelated to logic)
-    public void Shuffle_Valid_List_Does_Shuffle(int startNumber, int totalNumbers)
+    public void Shuffle_PreservesAllElements(int startNumber, int totalNumbers)
     {
-        //Arrange
-        IList<int> orderedNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
-        IList<int> shuffledNumbers = Enumerable.Range(startNumber, totalNumbers).ToList();
+        IList<int> original = Enumerable.Range(startNumber, totalNumbers).ToList();
+        IList<int> shuffled = Enumerable.Range(startNumber, totalNumbers).ToList();
 
-        //Act
-        shuffledNumbers.Shuffle();
+        shuffled.Shuffle();
 
-        //Assert
-        Assert.False(orderedNumbers.SequenceEqual(shuffledNumbers));
+        Assert.Equal(original.OrderBy(x => x), shuffled.OrderBy(x => x));
     }
 
+    // A seeded Random makes the shuffle reproducible, which kills the old flake two ways:
+    // the same seed must yield the same permutation, and across 500 elements "unchanged" has
+    // probability 1/500! — so asserting it actually reordered is safe, not a gamble.
     [Fact]
-    public void Shuffle_Valid_List_Handles_1_Element()
+    public void Shuffle_WithSeededRandom_IsReproducibleAndReorders()
     {
-        //Arrange
-        IList<int> orderedNumbers = Enumerable.Range(1, 1).ToList();
-        IList<int> shuffledNumbers = Enumerable.Range(1, 1).ToList();
+        IList<int> original = Enumerable.Range(1, 500).ToList();
+        IList<int> first = Enumerable.Range(1, 500).ToList();
+        IList<int> second = Enumerable.Range(1, 500).ToList();
 
-        //Act
-        shuffledNumbers.Shuffle();
+        first.Shuffle(new Random(12345));
+        second.Shuffle(new Random(12345));
 
-        //Assert
-        Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
+        Assert.Equal(first, second);                                   // same seed → identical permutation
+        Assert.NotEqual(original, first);                              // it genuinely reordered
+        Assert.Equal(original.OrderBy(x => x), first.OrderBy(x => x)); // and remained a permutation
     }
 
+    // A single element is a permutation of itself — the degenerate lower bound of Shuffle.
+    // (The empty-list case is covered by Shuffle_Empty_List_Returns_Empty above.)
     [Fact]
-    public void Shuffle_Valid_List_Handles_0_Elements()
+    public void Shuffle_SingleElement_IsUnchanged()
     {
-        //Arrange
-        IList<int> orderedNumbers = new List<int>();
-        IList<int> shuffledNumbers = new List<int>();
+        IList<int> numbers = new List<int> { 42 };
 
-        //Act
-        shuffledNumbers.Shuffle();
+        numbers.Shuffle();
 
-        //Assert
-        Assert.True(orderedNumbers.SequenceEqual(shuffledNumbers));
+        Assert.Equal(new[] { 42 }, numbers);
     }
 
     [Fact]
     public void TakeUntil_Subset_Valid_List()
     {
-        //Arrange
         IList<int> numbers = Enumerable.Range(1, 10).ToList();
-        IList<int> expected = Enumerable.Range(1, 3).ToList();
-        //Act
-        var assertionList = numbers.TakeUntil(x => x == 3).ToList();
-        //Assert
-        Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+
+        var result = numbers.TakeUntil(x => x == 3).ToList();
+
+        Assert.Equal(new[] { 1, 2, 3 }, result);
     }
 
     [Theory]
@@ -88,13 +87,11 @@ public class IEnumerableTests
     [InlineData(short.MaxValue)]
     public void TakeUntil_All_Elements_Valid_List(int count)
     {
-        //Arrange
         IList<int> numbers = Enumerable.Range(1, count).ToList();
-        IList<int> expected = Enumerable.Range(1, count).ToList();
-        //Act
-        var assertionList = numbers.TakeUntil(x => x == numbers.Count).ToList();
-        //Assert
-        Assert.True(Enumerable.SequenceEqual(assertionList, expected));
+
+        var result = numbers.TakeUntil(x => x == numbers.Count).ToList();
+
+        Assert.Equal(Enumerable.Range(1, count), result);
     }
 
     [Theory]
