@@ -174,7 +174,7 @@ public static class IEnumerableExtensions
     /// <typeparam name="T">The element type of the list.</typeparam>
     /// <param name="list">The list to shuffle in place.</param>
     /// <param name="rng">
-    /// The random source to draw from. When <c>null</c> (the default) a thread-safe shared instance is used;
+    /// The random source to draw from. When <c>null</c> (the default), a thread-safe default is used (a per-thread instance on netstandard2.0, or <see cref="Random.Shared"/> on modern TFMs);
     /// pass a seeded <see cref="Random"/> for a deterministic, reproducible shuffle (e.g. in tests).
     /// </param>
     // Attribution: https://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
