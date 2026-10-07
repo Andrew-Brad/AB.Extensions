@@ -3,16 +3,23 @@
   "isRoot": true,
   "tools": {
     "dotnet-format": {
-      "version": "3.3.111304",
+      "version": "5.1.250801",
       "commands": [
         "dotnet-format"
       ],
       "rollForward": false
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.5.10",
+      "version": "5.5.11",
       "commands": [
         "reportgenerator"
+      ],
+      "rollForward": false
+    },
+    "husky": {
+      "version": "0.9.1",
+      "commands": [
+        "husky"
       ],
       "rollForward": false
     }

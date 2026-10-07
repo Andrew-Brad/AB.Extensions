@@ -1,5 +1,4 @@
 <Project>
-
   <!-- Cross-cutting language & analysis settings shared by every project in the repo. -->
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
@@ -12,7 +11,6 @@
   <!-- Authoring & package identity. Inert for IsPackable=false projects. -->
   <PropertyGroup>
     <Authors>Andrew Brad</Authors>
-    <Copyright>Copyright © Andrew Brad</Copyright>
     <PackageProjectUrl>https://github.com/Andrew-Brad/AB.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Andrew-Brad/AB.Extensions</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -23,10 +21,10 @@
 
   <!-- Packaging quality: SourceLink, deterministic symbols, reproducible builds. -->
   <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!-- Set in CI only: -p:ContinuousIntegrationBuild=true -->
   </PropertyGroup>
 
