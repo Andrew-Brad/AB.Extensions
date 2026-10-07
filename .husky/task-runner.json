@@ -2,13 +2,11 @@
    "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
    "tasks": [
       {
-         "name": "welcome-message-example",
-         "command": "bash",
-         "args": [ "-c", "echo Husky.Net is awesome!" ],
-         "windows": {
-            "command": "cmd",
-            "args": ["/c", "echo Husky.Net is awesome!" ]
-         }
+         "name": "format-check-staged",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": [ "dotnet-format", "AB.Extensions.sln", "--no-restore", "--check", "--include", "${staged}" ],
+         "include": [ "**/*.cs" ]
       }
    ]
 }
