@@ -68,6 +68,7 @@ dotnet tool restore
 |------|---------|
 | `dotnet-format` | Keeps formatting/linting adherent to `.editorconfig`. |
 | `dotnet-reportgenerator-globaltool` | Turns raw coverage data into an HTML report + summaries (used by the coverage script below). |
+| `dotnet-husky` | .Net wrapper of git hooks for automatic linting. See [Husky.Net](https://github.com/alirezanet/Husky.Net). Hooks install automatically on restore (set `HUSKY=0` to opt out). |
 
 To run an SDK that builds and tests the library, you need the **.NET 8, 9, and 10** runtimes installed (the test project multi-targets all three).
 

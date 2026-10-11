@@ -4,6 +4,14 @@
 * text=auto
 
 ###############################################################################
+# Shell scripts and git hooks must be LF on every platform: a CRLF shebang
+# line fails with `bad interpreter: /bin/sh^M` on Linux, macOS, WSL, and CI.
+# eol=lf overrides core.autocrlf, so Windows contributors get LF at checkout.
+###############################################################################
+*.sh            text eol=lf
+.husky/*        text eol=lf
+
+###############################################################################
 # Line-ending test fixtures — pin exact bytes so `text=auto` can't normalize
 # the very endings these files exist to prove. eol=lf/crlf force the checkout
 # ending on every platform regardless of core.autocrlf; -text (binary) is the

@@ -40,4 +40,15 @@
     </None>
   </ItemGroup>
 
+  <!-- Installs the Husky.Net git hooks (core.hooksPath) on first restore, so a fresh clone is hooked up automatically.
+       Opt out with HUSKY=0. Added by `dotnet husky attach`. -->
+  <Target Name="Husky" AfterTargets="Restore" Condition="'$(HUSKY)' != 0 and '$(IsCrossTargetingBuild)' == 'true'" Inputs="..\..\.config\dotnet-tools.json" Outputs="..\..\.husky\_\install.stamp">
+    <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
+    <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory="..\.." />
+    <Touch Files="..\..\.husky\_\install.stamp" AlwaysCreate="true" Condition="Exists('..\..\.husky\_')" />
+    <ItemGroup>
+      <FileWrites Include="..\..\.husky\_\install.stamp" />
+    </ItemGroup>
+  </Target>
+
 </Project>
